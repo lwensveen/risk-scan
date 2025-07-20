@@ -1,0 +1,19 @@
+# Add files here to ignore them from prettier formatting
+
+**/dist
+**/out-tsc
+**/.next
+/coverage
+
+.angular
+
+/.nx/cache
+/.nx/workspace-data
+
+pnpm-lock.yaml
+bun.lock
+
+apps/**/src/drizzle/**/*.sql
+apps/**/src/drizzle/meta/*.json
+
+node_modules

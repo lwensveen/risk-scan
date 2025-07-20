@@ -1,102 +1,97 @@
-import Image, { type ImageProps } from "next/image";
-import { Button } from "@repo/ui/button";
-import styles from "./page.module.css";
+'use client';
 
-type Props = Omit<ImageProps, "src"> & {
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+
+type ThemeImageProps = {
   srcLight: string;
   srcDark: string;
+  alt: string;
+  width: number;
+  height: number;
+  priority?: boolean;
 };
 
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
-
-  return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
-  );
-};
+const ThemeImage = ({ srcLight, srcDark, ...rest }: ThemeImageProps) => (
+  <>
+    <Image {...rest} src={srcLight} className="block dark:hidden" />
+    <Image {...rest} src={srcDark} className="hidden dark:block" />
+  </>
+);
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
+    <main className="max-w-6xl mx-auto p-6 space-y-8">
+      <header className="flex items-center justify-between">
         <ThemeImage
-          className={styles.logo}
-          srcLight="turborepo-dark.svg"
-          srcDark="turborepo-light.svg"
-          alt="Turborepo logo"
-          width={180}
-          height={38}
+          srcLight="/logo-dark.svg"
+          srcDark="/logo-light.svg"
+          alt="RiskScan Logo"
+          width={160}
+          height={32}
           priority
         />
-        <ol>
-          <li>
-            Get started by editing <code>apps/web/app/page.tsx</code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+        <Button>Run Daily ETL</Button>
+      </header>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new/clone?demo-description=Learn+to+implement+a+monorepo+with+a+two+Next.js+sites+that+has+installed+three+local+packages.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F4K8ZISWAzJ8X1504ca0zmC%2F0b21a1c6246add355e55816278ef54bc%2FBasic.png&demo-title=Monorepo+with+Turborepo&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Monorepo+with+Turborepo&repository-name=monorepo-turborepo&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fturborepo%2Ftree%2Fmain%2Fexamples%2Fbasic&root-directory=apps%2Fdocs&skippable-integrations=1&teamSlug=vercel&utm_source=create-turbo"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://turborepo.com/docs?utm_source"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com/templates?search=turborepo&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://turborepo.com?utm_source=create-turbo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to turborepo.com →
-        </a>
-      </footer>
-    </div>
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Risk Flags</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="flex justify-between">
+              <span className="font-mono text-sm">BXP</span>
+              <Badge variant="destructive">LEVERAGE</Badge>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-mono text-sm">HBAN</span>
+              <Badge>LIQUIDITY</Badge>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-mono text-sm">USDC</span>
+              <Badge variant="outline">DEPEG RISK</Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>ETL Status</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p className="text-sm text-muted-foreground">
+              Last run: <span className="text-foreground">6:30 AM</span>
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Duration: <span className="text-foreground">2m 12s</span>
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Next run:{' '}
+              <span className="text-foreground">Tomorrow 6:30 AM</span>
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>System Health</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p className="text-sm text-foreground">
+              API: <Badge variant="success">Up</Badge>
+            </p>
+            <p className="text-sm text-foreground">
+              Redis: <Badge variant="success">Connected</Badge>
+            </p>
+            <p className="text-sm text-foreground">
+              DB: <Badge variant="success">Healthy</Badge>
+            </p>
+          </CardContent>
+        </Card>
+      </section>
+    </main>
   );
 }

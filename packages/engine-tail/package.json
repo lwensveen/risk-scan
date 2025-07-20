@@ -1,0 +1,30 @@
+{
+  "name": "@risk-scan/engine-tail",
+  "description": "Tail‑risk rule engine for RiskScan (REIT, Bank, BDC, Stablecoin checks)",
+  "version": "1.0.0",
+  "dependencies": {
+    "@risk-scan/types": "1.0.0",
+    "axios": "^1.10.0",
+    "yahoo-finance2": "^3.4.1",
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "@risk-scan/eslint-config": "0.0.0",
+    "@risk-scan/typescript-config": "0.0.0",
+    "@types/node": "^24.0.15",
+    "eslint": "^9.31.0",
+    "typescript": "5.8.3"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint src --max-warnings 0",
+    "typecheck": "tsc --noEmit"
+  },
+  "type": "module",
+  "types": "dist/index.d.ts"
+}

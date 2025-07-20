@@ -1,0 +1,37 @@
+{
+  "name": "@risk-scan/etl",
+  "description": "ETL and database layer for RiskScan (Drizzle + Upstash + YahooFinance)",
+  "version": "1.0.0",
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
+    "@risk-scan/types": "1.0.0",
+    "axios": "^1.10.0",
+    "drizzle-orm": "^0.44.3",
+    "pg": "^8.16.3",
+    "ws": "^8.18.3",
+    "yahoo-finance2": "^3.4.1",
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.15",
+    "@types/pg": "^8.15.4",
+    "@types/ws": "^8.18.1",
+    "eslint": "^9.31.0",
+    "typescript": "5.8.3"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "peerDependencies": {
+    "@risk-scan/utils": "1.0.0"
+  },
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint src --max-warnings 0",
+    "typecheck": "tsc --noEmit"
+  },
+  "type": "module",
+  "types": "dist/index.d.ts"
+}
