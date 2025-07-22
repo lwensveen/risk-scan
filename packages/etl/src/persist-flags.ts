@@ -23,7 +23,7 @@ export async function persistFlags(flags: RiskFlag[], pool?: Pool) {
     .insert(riskFlagTable)
     .values(rows)
     .onConflictDoUpdate({
-      target: [riskFlagTable.ticker, riskFlagTable.ts],
+      target: [riskFlagTable.category, riskFlagTable.ticker, riskFlagTable.ts],
       set: {
         flags: sql`EXCLUDED.flags`,
         severity: sql`EXCLUDED.severity`,

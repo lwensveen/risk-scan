@@ -2,17 +2,22 @@ import {
   bigint,
   index,
   jsonb,
+  pgEnum,
   pgTable,
   text,
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
+import { categoryValues, severityValues } from '@risk-scan/types';
+
+export const severityPgEnum = pgEnum('severity', severityValues);
+export const categoryPgEnum = pgEnum('risk_category', categoryValues);
 
 export const entitySnapshotTable = pgTable(
   'entity_snapshot',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    category: text('category').notNull(),
+    category: categoryPgEnum('category').notNull(),
     ticker: text('ticker').notNull(),
     ts: bigint('ts', { mode: 'number' }).notNull(), // epoch‑ms
     payload: jsonb('payload').notNull(),
@@ -31,11 +36,11 @@ export const riskFlagTable = pgTable(
   'risk_flag',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    category: text('category').notNull(),
+    category: categoryPgEnum('category').notNull(),
     ticker: text('ticker').notNull(),
     ts: bigint('ts', { mode: 'number' }).notNull(),
     flags: jsonb('flags').$type<string[]>().notNull(),
-    severity: text('severity').notNull(),
+    severity: severityPgEnum('severity').notNull(),
   },
   (table) => [
     uniqueIndex('uniq_rf_cat_ticker_ts').on(
