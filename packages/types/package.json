@@ -21,6 +21,7 @@
     "lint": "eslint src --max-warnings 0",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
+  "sideEffects": false,
   "type": "module",
   "types": "dist/index.d.ts"
 }
