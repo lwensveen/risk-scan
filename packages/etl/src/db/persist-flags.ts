@@ -2,7 +2,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { RiskFlag } from '@risk-scan/types';
 import { sql } from 'drizzle-orm';
-import { riskFlagTable } from './db/schema.js';
+import { riskFlagsTable } from './schema.js';
 
 export async function persistFlags(flags: RiskFlag[], pool?: Pool) {
   if (flags.length === 0) return { inserted: 0 };
@@ -20,10 +20,14 @@ export async function persistFlags(flags: RiskFlag[], pool?: Pool) {
   }));
 
   await db
-    .insert(riskFlagTable)
+    .insert(riskFlagsTable)
     .values(rows)
     .onConflictDoUpdate({
-      target: [riskFlagTable.category, riskFlagTable.ticker, riskFlagTable.ts],
+      target: [
+        riskFlagsTable.category,
+        riskFlagsTable.ticker,
+        riskFlagsTable.updatedAt,
+      ],
       set: {
         flags: sql`EXCLUDED.flags`,
         severity: sql`EXCLUDED.severity`,

@@ -1,6 +1,6 @@
 import YahooFinance from 'yahoo-finance2';
 import axios from 'axios';
-import { secConcept, yoy } from './utils/utils.js';
+import { secConcept, yoy } from './utils.js';
 import {
   Bdc,
   HealthcareRollup,
