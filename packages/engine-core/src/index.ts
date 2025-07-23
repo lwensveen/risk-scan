@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { z } from 'zod';
-import { RiskFlag } from '@risk-scan/types';
+import { CoreBankSchema, RiskFlag } from '@risk-scan/types';
 import { secConcept } from '@risk-scan/etl';
+import { checkCoreBank } from './rules/core-bank';
 
 const first = async (t: string, c: string) =>
   (await secConcept(t, c))[0]?.val ?? null;
@@ -49,33 +49,6 @@ async function buildCoreBank(ticker: string) {
     tier1CapitalRatio: tier1,
     interestCoverage: icov,
   };
-}
-
-export const CoreBankSchema = z.object({
-  ticker: z.string(),
-  durationGapYears: z.number().nullable(),
-  ltvRatio: z.number().nullable(),
-  tier1CapitalRatio: z.number().nullable(),
-  interestCoverage: z.number().nullable(),
-});
-export type CoreBank = z.infer<typeof CoreBankSchema>;
-
-function checkCoreBank(b: CoreBank): RiskFlag | null {
-  const r: string[] = [];
-  if ((b.durationGapYears ?? 0) > 3) r.push('🚩 Duration gap > 3y');
-  if ((b.ltvRatio ?? 0) > 0.9) r.push('🚩 High LTV');
-  if ((b.tier1CapitalRatio ?? 1) < 0.08) r.push('🚩 Tier‑1 < 8 %');
-  if ((b.interestCoverage ?? 1) < 1) r.push('🚩 NII negative');
-
-  if (!r.length) return null;
-  const sev = r.length >= 3 ? 'high' : r.length === 2 ? 'medium' : 'low';
-  return {
-    category: 'CoreBank',
-    ticker: b.ticker,
-    ts: Date.now(),
-    flags: r,
-    severity: sev,
-  } satisfies RiskFlag;
 }
 
 export async function runCoreBankRisk(): Promise<RiskFlag[]> {
