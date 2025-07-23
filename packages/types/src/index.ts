@@ -1,4 +1,5 @@
 export * from './domains/bdc.js';
+export * from './domains/core-bank.js';
 export * from './domains/healthcare-rollup.js';
 export * from './domains/office-reit.js';
 export * from './domains/regional-bank.js';
