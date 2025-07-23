@@ -4,9 +4,10 @@
   "version": "2.0.0",
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
+    "@risk-scan/ai": "workspace:*",
     "@risk-scan/types": "workspace:*",
     "@risk-scan/utils": "workspace:*",
-    "axios": "^1.10.0",
+    "axios": "^1.11.0",
     "drizzle-orm": "^0.44.3",
     "pg": "^8.16.3",
     "ws": "^8.18.3",

@@ -61,6 +61,15 @@ export async function getFlagsFiltered(filters: FlagsFilter) {
     .where(where.length ? and(...where) : undefined);
 }
 
+export async function getLatestFlagsForTicker(ticker: string) {
+  return db
+    .select()
+    .from(riskFlagsTable)
+    .where(eq(riskFlagsTable.ticker, ticker))
+    .orderBy(desc(riskFlagsTable.createdAt))
+    .limit(10);
+}
+
 export async function getSnapshotsFiltered(filters: SnapshotFilter) {
   const { ticker, from, to } = filters;
   const where = [];

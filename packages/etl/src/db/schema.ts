@@ -5,6 +5,7 @@ import {
   text,
   uniqueIndex,
   uuid,
+  varchar,
 } from 'drizzle-orm/pg-core';
 import {
   Bdc,
@@ -61,5 +62,13 @@ export const riskFlagsTable = pgTable(
     index('idx_risk_flag_severity').on(table.severity),
   ]
 );
+
+export const cikCacheTable = pgTable('cik_cache', {
+  ticker: varchar('ticker', { length: 10 }).primaryKey(),
+  cik: varchar('cik', { length: 10 }).notNull(),
+  createdAt: createTimestampColumn('created_at'),
+  updatedAt: createTimestampColumn('updated_at', true),
+});
+
 export type EntitySnapshotRow = typeof entitySnapshotsTable.$inferSelect;
 export type RiskFlagRow = typeof riskFlagsTable.$inferSelect;
