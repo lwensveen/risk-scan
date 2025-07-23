@@ -4,6 +4,12 @@ export const severityValues = ['low', 'medium', 'high'] as const;
 export const SeverityEnum = z.enum(severityValues);
 export type Severity = z.infer<typeof SeverityEnum>;
 
+export enum RiskSeverityEnum {
+  Low = 'low',
+  Medium = 'medium',
+  High = 'high',
+}
+
 export const categoryValues = [
   'BDC',
   'CoreBank',
@@ -12,5 +18,20 @@ export const categoryValues = [
   'RegionalBank',
   'Stablecoin',
 ] as const;
+
 export const RiskCategoryEnum = z.enum(categoryValues);
-export type RiskCategory = z.infer<typeof RiskCategoryEnum>;
+
+export enum RiskCategoryTS {
+  BDC = 'BDC',
+  CoreBank = 'CoreBank',
+  HealthcareRollup = 'HealthcareRollup',
+  OfficeREIT = 'OfficeREIT',
+  RegionalBank = 'RegionalBank',
+  Stablecoin = 'Stablecoin',
+}
+
+export type RiskCategory = (typeof categoryValues)[number];
+
+export enum RiskFlagEnum {
+  GoingConcern = 'GoingConcern',
+}

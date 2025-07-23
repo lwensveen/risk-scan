@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { RiskCategory, riskScanConfig } from '@risk-scan/types';
 
 type SecFact = { val: number; end: string };
 
@@ -62,4 +63,11 @@ export function yoy(series: SecFact[]): number | null {
       new Date(latest.end).getFullYear() - new Date(f.end).getFullYear() === 1
   );
   return prev ? latest.val - prev.val : null;
+}
+
+export function detectCategoryFromTicker(ticker: string): RiskCategory {
+  for (const category of Object.keys(riskScanConfig) as RiskCategory[]) {
+    if (riskScanConfig[category].includes(ticker)) return category;
+  }
+  throw new Error(`Unknown category for ticker: ${ticker}`);
 }
