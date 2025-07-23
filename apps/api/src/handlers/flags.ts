@@ -1,8 +1,36 @@
 import { FastifyInstance } from 'fastify';
-import { RiskFlagSchema } from '@risk-scan/types';
-import { getFlagsByTicker, getLatestFlags } from '@risk-scan/etl';
+import { z } from 'zod';
+import { categoryValues, RiskFlagSchema } from '@risk-scan/types';
+import {
+  getFlagsByTicker,
+  getFlagsFiltered,
+  getLatestFlags,
+} from '@risk-scan/etl';
+
+const FlagsQuerySchema = z.object({
+  tickers: z.string().optional(),
+  category: z.enum(categoryValues).optional(),
+  from: z.coerce.date().optional(),
+  to: z.coerce.date().optional(),
+  useCreatedAt: z.coerce.boolean().optional(),
+});
 
 export function registerFlagsHandlers(app: FastifyInstance) {
+  app.get(
+    '/flags',
+    {
+      schema: {
+        querystring: FlagsQuerySchema,
+        response: { 200: { type: 'array', items: RiskFlagSchema } },
+      },
+    },
+    async (req) => {
+      const parsed = FlagsQuerySchema.parse(req.query);
+      const tickers = parsed.tickers?.split(',');
+      return getFlagsFiltered({ ...parsed, tickers });
+    }
+  );
+
   app.get(
     '/flags/latest',
     {
