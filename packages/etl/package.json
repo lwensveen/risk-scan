@@ -1,10 +1,10 @@
 {
   "name": "@risk-scan/etl",
   "description": "ETL and database layer for RiskScan (Drizzle + Upstash + YahooFinance)",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
-    "@risk-scan/types": "1.0.0",
+    "@risk-scan/types": "1.1.0",
     "axios": "^1.10.0",
     "drizzle-orm": "^0.44.3",
     "pg": "^8.16.3",
@@ -25,7 +25,7 @@
   ],
   "main": "dist/index.js",
   "peerDependencies": {
-    "@risk-scan/utils": "1.0.0"
+    "@risk-scan/utils": "1.1.0"
   },
   "private": true,
   "scripts": {

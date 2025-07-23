@@ -1,15 +1,15 @@
 {
   "name": "@risk-scan/api",
   "description": "Fastify HTTP API for RiskScan (Edge‑cached, Swagger‑documented)",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "dependencies": {
     "@fastify/caching": "^9.0.3",
     "@fastify/cors": "^11.0.1",
     "@fastify/etag": "^6.0.3",
     "@fastify/swagger": "^9.5.1",
     "@fastify/swagger-ui": "^5.2.3",
-    "@risk-scan/etl": "1.0.0",
-    "@risk-scan/utils": "1.0.0",
+    "@risk-scan/etl": "2.0.0",
+    "@risk-scan/utils": "1.1.0",
     "@upstash/qstash": "^2.8.1",
     "cache-manager-redis-yet": "^5.1.5",
     "dotenv": "^17.2.0",
@@ -18,8 +18,8 @@
     "zod": "^4.0.5"
   },
   "devDependencies": {
-    "@risk-scan/eslint-config": "0.0.0",
-    "@risk-scan/typescript-config": "0.0.0",
+    "@risk-scan/eslint-config": "0.1.0",
+    "@risk-scan/typescript-config": "0.1.0",
     "@types/node": "^24.0.15",
     "eslint": "^9.31.0",
     "typescript": "5.8.3"

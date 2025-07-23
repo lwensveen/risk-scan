@@ -1,5 +1,16 @@
 # @risk-scan/engine-tail
 
+## 1.1.0
+
+### Minor Changes
+
+- Add replay endpoint, improve timestamp filters, full snapshot auditing, and introduce CoreBank support
+
+### Patch Changes
+
+- Updated dependencies
+  - @risk-scan/types@1.1.0
+
 ## 1.0.0
 
 ### Major Changes
