@@ -1,4 +1,3 @@
-// src/server.ts
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import swagger from '@fastify/swagger';
@@ -6,7 +5,7 @@ import swaggerUI from '@fastify/swagger-ui';
 import caching from '@fastify/caching';
 import etag from '@fastify/etag';
 import { redisStore } from 'cache-manager-redis-yet';
-import { registerRoutes } from './routes.js';
+import { registerRoutes } from './routes/routes.js';
 import { registerGetRawBodyHook } from './hooks/raw-body-hook.js';
 
 const { UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN } = process.env;
@@ -35,7 +34,6 @@ export async function buildServer() {
     cache: store,
   });
 
-  // Hooks / routes
   registerGetRawBodyHook(app);
   await registerRoutes(app);
 

@@ -1,10 +1,14 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Receiver } from '@upstash/qstash';
-import { persistFlags, runEtl } from '@risk-scan/etl';
+import { ingestSnapshots, persistFlags } from '@risk-scan/etl';
 import { runCoreBankRisk } from '@risk-scan/engine-core';
-import { runTailRisk } from '@risk-scan/engine-tail';
-import { invalidateCache, sendSlackFlags } from '@risk-scan/utils';
+import {
+  invalidateCache,
+  riskScanConfig,
+  sendSlackFlags,
+} from '@risk-scan/utils';
 import getRawBody from 'raw-body';
+import { runTailRisk } from '@risk-scan/engine-tail';
 
 const receiver = new Receiver({
   currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY!,
@@ -35,17 +39,11 @@ export function registerDailyETLHandler(app: FastifyInstance) {
     async (_req, reply) => {
       app.log.info('[qstash] daily ETL started');
 
-      await runEtl();
+      await ingestSnapshots();
 
       const [coreFlags, tailFlags] = await Promise.all([
         runCoreBankRisk(),
-        runTailRisk({
-          officeReitTickers: ['BXP', 'SLG', 'VNO'],
-          healthcareTickers: ['AMEH', 'OSH', 'ALHC'],
-          regionalBankTickers: ['FITB', 'HBAN', 'CFG'],
-          bdcTickers: ['ARCC', 'GBDC'],
-          stablecoinSymbols: ['USDT', 'USDC'],
-        }),
+        runTailRisk(riskScanConfig),
       ]);
 
       const flags = [...coreFlags, ...tailFlags];
