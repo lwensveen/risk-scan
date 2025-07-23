@@ -1,10 +1,14 @@
 export const riskScanConfig = {
-  OfficeREIT: ['BXP', 'SLG', 'VNO'],
-  HealthcareRollup: ['AMEH', 'OSH', 'ALHC'],
-  RegionalBank: ['FITB', 'HBAN', 'CFG'],
   BDC: ['ARCC', 'GBDC'],
-  Stablecoin: ['USDT', 'USDC'],
   CoreBank: ['JPM', 'BAC', 'C', 'WFC'],
-} as const;
+  HealthcareRollup: ['AMEH', 'OSH', 'ALHC'],
+  OfficeREIT: ['BXP', 'SLG', 'VNO'],
+  RegionalBank: ['FITB', 'HBAN', 'CFG'],
+  Stablecoin: ['USDT', 'USDC'],
+};
 
 export type RiskScanCategory = keyof typeof riskScanConfig;
+
+export type TailRiskConfig = {
+  [K in RiskScanCategory]: string[];
+};

@@ -3,14 +3,15 @@
   "description": "Core‑bank risk engine for RiskScan (duration‑gap & LTV shock tests)",
   "version": "1.1.0",
   "dependencies": {
-    "@risk-scan/types": "1.1.0",
+    "@risk-scan/etl": "workspace:*",
+    "@risk-scan/types": "workspace:*",
     "axios": "^1.10.0",
     "yahoo-finance2": "^3.5.0",
     "zod": "^4.0.5"
   },
   "devDependencies": {
-    "@risk-scan/eslint-config": "0.1.0",
-    "@risk-scan/typescript-config": "0.1.0",
+    "@risk-scan/eslint-config": "workspace:*",
+    "@risk-scan/typescript-config": "workspace:*",
     "@types/node": "^24.1.0",
     "eslint": "^9.31.0",
     "typescript": "5.8.3"

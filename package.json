@@ -22,7 +22,9 @@
     "lint": "turbo run lint"
   },
   "trustedDependencies": [
-    "@tailwindcss/oxide"
+    "@tailwindcss/oxide",
+    "esbuild",
+    "sharp"
   ],
   "workspaces": [
     "apps/*",

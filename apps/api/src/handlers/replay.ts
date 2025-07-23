@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { getSnapshotByTicker } from '@risk-scan/etl';
 import {
   checkBDC,
@@ -17,7 +17,7 @@ import {
   RiskFlagSchema,
   StablecoinSchema,
 } from '@risk-scan/types';
-import { checkCoreBank } from '@risk-scan/engine-core/dist/rules/core-bank.js';
+import { checkCoreBank } from '@risk-scan/engine-core';
 
 export function registerReplayRoute(app: FastifyInstance) {
   app.get(
@@ -57,7 +57,7 @@ export function registerReplayRoute(app: FastifyInstance) {
           return checkOfficeREIT(OfficeReitSchema.parse(snapshot.payload));
         case 'HealthcareRollup':
           return checkHealthcareRollup(
-            HealthcareRollupSchema.parse(snapshot.payload)
+            HealthcareRollupSchema.parse(snapshot.payload),
           );
         case 'RegionalBank':
           return checkRegionalBank(RegionalBankSchema.parse(snapshot.payload));
@@ -68,7 +68,7 @@ export function registerReplayRoute(app: FastifyInstance) {
         default:
           return null;
       }
-    }
+    },
   );
 
   const CategoryEnum = z.enum([
@@ -117,6 +117,6 @@ export function registerReplayRoute(app: FastifyInstance) {
         default:
           return null;
       }
-    }
+    },
   );
 }

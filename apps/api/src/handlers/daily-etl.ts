@@ -2,13 +2,10 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Receiver } from '@upstash/qstash';
 import { ingestSnapshots, persistFlags } from '@risk-scan/etl';
 import { runCoreBankRisk } from '@risk-scan/engine-core';
-import {
-  invalidateCache,
-  riskScanConfig,
-  sendSlackFlags,
-} from '@risk-scan/utils';
 import getRawBody from 'raw-body';
 import { runTailRisk } from '@risk-scan/engine-tail';
+import { riskScanConfig } from '@risk-scan/types';
+import { invalidateCache, sendSlackFlags } from '@risk-scan/utils';
 
 const receiver = new Receiver({
   currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY!,

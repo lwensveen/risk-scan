@@ -1,5 +1,5 @@
 /** @type {import('prettier').Config} */
-module.exports = {
-    "singleQuote": true,
-    "trailingComma": "es5"
-}
+export default {
+  singleQuote: true,
+  trailingComma: 'es5',
+};
