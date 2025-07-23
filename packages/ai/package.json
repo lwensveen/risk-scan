@@ -1,0 +1,29 @@
+{
+  "name": "@risk-scan/ai",
+  "description": "Utility helpers for RiskScan (Slack, Upstash cache, etc.)",
+  "version": "0.0.0",
+  "dependencies": {
+    "@risk-scan/types": "workspace:*",
+    "node-fetch": "^3.3.2",
+    "openai": "^5.10.2",
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "@risk-scan/eslint-config": "workspace:*",
+    "@risk-scan/typescript-config": "workspace:*",
+    "@types/node": "^24.1.0",
+    "eslint": "^9.31.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint src ",
+    "typecheck": "tsc --noEmit"
+  },
+  "type": "module",
+  "types": "dist/index.d.ts"
+}
