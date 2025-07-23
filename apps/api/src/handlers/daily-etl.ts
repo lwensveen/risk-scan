@@ -1,11 +1,18 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Receiver } from '@upstash/qstash';
-import { ingestSnapshots, persistFlags } from '@risk-scan/etl';
+import {
+  detectCategoryFromTicker,
+  ingestSnapshots,
+  persistFlags,
+  upsertFlag,
+} from '@risk-scan/etl';
 import { runCoreBankRisk } from '@risk-scan/engine-core';
 import getRawBody from 'raw-body';
 import { runTailRisk } from '@risk-scan/engine-tail';
-import { riskScanConfig } from '@risk-scan/types';
+import { RiskFlagEnum, riskScanConfig } from '@risk-scan/types';
 import { invalidateCache, sendSlackFlags } from '@risk-scan/utils';
+import { fetchLatest10KFootnote } from '@risk-scan/etl/dist/queries/fetch-10k-footnote.js';
+import { detectGoingConcern } from '@risk-scan/ai';
 
 const receiver = new Receiver({
   currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY!,
@@ -59,6 +66,63 @@ export function registerDailyETLHandler(app: FastifyInstance) {
       }
 
       reply.code(204).send();
+    }
+  );
+
+  app.post(
+    '/internal/check-gc',
+    {
+      schema: {
+        querystring: {
+          type: 'object',
+          required: ['ticker'],
+          properties: {
+            ticker: { type: 'string' },
+          },
+        },
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              ticker: { type: 'string' },
+              goingConcern: { type: 'boolean' },
+              flagged: { type: 'boolean' },
+            },
+          },
+          404: {
+            type: 'object',
+            properties: {
+              error: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+    async (req, res) => {
+      const { ticker } = req.query as { ticker: string };
+
+      try {
+        const footnote = await fetchLatest10KFootnote(ticker);
+        if (!footnote) {
+          return res.status(404).send({ error: 'No footnote found' });
+        }
+
+        const goingConcern = await detectGoingConcern(footnote);
+        if (!goingConcern) {
+          return res.send({ ticker, goingConcern: false, flagged: false });
+        }
+
+        await upsertFlag(
+          ticker,
+          detectCategoryFromTicker(ticker),
+          RiskFlagEnum.GoingConcern
+        );
+
+        return res.send({ ticker, goingConcern: true, flagged: true });
+      } catch (err) {
+        req.log.error(err, 'GC scan failed');
+        return res.status(500).send({ error: 'GC scan failed' });
+      }
     }
   );
 }
