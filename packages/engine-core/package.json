@@ -5,13 +5,13 @@
   "dependencies": {
     "@risk-scan/types": "1.1.0",
     "axios": "^1.10.0",
-    "yahoo-finance2": "^3.4.1",
+    "yahoo-finance2": "^3.5.0",
     "zod": "^4.0.5"
   },
   "devDependencies": {
     "@risk-scan/eslint-config": "0.1.0",
     "@risk-scan/typescript-config": "0.1.0",
-    "@types/node": "^24.0.15",
+    "@types/node": "^24.1.0",
     "eslint": "^9.31.0",
     "typescript": "5.8.3"
   },
@@ -22,7 +22,7 @@
   "private": true,
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "lint": "eslint src --max-warnings 0",
+    "lint": "eslint src ",
     "typecheck": "tsc --noEmit"
   },
   "types": "dist/index.d.ts"

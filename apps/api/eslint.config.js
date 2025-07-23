@@ -1,4 +1,4 @@
-import { nextJsConfig } from '@risk-scan/eslint-config/next-js';
+import { config } from '@risk-scan/eslint-config/base';
 
 /** @type {import('eslint').Linter.Config} */
-export default nextJsConfig;
+export default config;

@@ -9,6 +9,17 @@
         "dist/**",
         ".next/**",
         "!**/.next/cache/**"
+      ],
+      "env": [
+        "DATABASE_URL",
+        "FRED_KEY",
+        "PLACER_KEY",
+        "PORT",
+        "QSTASH_CURRENT_SIGNING_KEY",
+        "QSTASH_NEXT_SIGNING_KEY",
+        "SLACK_WEBHOOK",
+        "UPSTASH_REDIS_REST_TOKEN",
+        "UPSTASH_REDIS_REST_URL"
       ]
     },
     "lint": {
