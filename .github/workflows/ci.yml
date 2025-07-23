@@ -1,0 +1,31 @@
+name: CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - name: Setup Node & Bun
+        uses: ./.github/actions/setup-node-bun
+        with:
+          node-version: '22'
+          bun-version: 'latest'
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Lint & Type‑check
+        run: bunx turbo run lint typecheck --cache-dir=.turbo
+
+      - name: Unit tests
+        run: bunx turbo run test --cache-dir=.turbo
+
+      - name: Build
+        run: bunx turbo run build --cache-dir=.turbo
