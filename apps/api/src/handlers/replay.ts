@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import { getSnapshotByTicker } from '@risk-scan/etl';
 import {
   checkBDC,
@@ -8,58 +8,60 @@ import {
   checkRegionalBank,
   checkStablecoin,
 } from '@risk-scan/engine-tail';
+import { checkCoreBank } from '@risk-scan/engine-core';
 import {
   BdcSchema,
   CoreBankSchema,
   HealthcareRollupSchema,
   OfficeReitSchema,
   RegionalBankSchema,
-  RiskCategory,
   RiskCategoryEnum,
   StablecoinSchema,
 } from '@risk-scan/types';
-import { checkCoreBank } from '@risk-scan/engine-core';
-import { RiskFlagSelectSchema } from '@risk-scan/db';
+import { RiskFlagInsertSchema } from '@risk-scan/db';
 
-export function registerReplayRoute(app: FastifyInstance) {
-  app.get(
+export function registerReplayRoutes(app: FastifyInstance) {
+  const ReplayParams = z.object({
+    ticker: z.string().min(1),
+    category: z.enum(RiskCategoryEnum.enum),
+  });
+
+  const ReplayBody = z.object({
+    category: z.enum(RiskCategoryEnum.enum),
+    payload: z.unknown(),
+  });
+
+  const ReplayResponse = z.union([RiskFlagInsertSchema, z.null()]);
+
+  app.get<{
+    Params: z.infer<typeof ReplayParams>;
+    Reply: z.infer<typeof ReplayResponse>;
+  }>(
     '/replay/:ticker/:category',
     {
+      config: { cache: { expiresIn: 300 } },
       schema: {
-        params: z
-          .object({
-            ticker: z.string(),
-            category: RiskCategoryEnum,
-          })
-          .strict(),
-        response: {
-          200: {
-            anyOf: [RiskFlagSelectSchema, { type: 'null' }],
-          },
-        },
+        params: ReplayParams,
+        response: { 200: ReplayResponse },
       },
     },
     async (req) => {
-      const { ticker, category } = req.params as {
-        ticker: string;
-        category: string;
-      };
+      const { ticker, category } = req.params;
       const [snapshot] = await getSnapshotByTicker(ticker);
-
       if (!snapshot || snapshot.category !== category) return null;
 
       switch (category) {
-        case 'OfficeREIT':
+        case RiskCategoryEnum.enum.OfficeREIT:
           return checkOfficeREIT(OfficeReitSchema.parse(snapshot.payload));
-        case 'HealthcareRollup':
+        case RiskCategoryEnum.enum.HealthcareRollup:
           return checkHealthcareRollup(
             HealthcareRollupSchema.parse(snapshot.payload)
           );
-        case 'RegionalBank':
+        case RiskCategoryEnum.enum.RegionalBank:
           return checkRegionalBank(RegionalBankSchema.parse(snapshot.payload));
-        case 'BDC':
+        case RiskCategoryEnum.enum.BDC:
           return checkBDC(BdcSchema.parse(snapshot.payload));
-        case 'Stablecoin':
+        case RiskCategoryEnum.enum.Stablecoin:
           return checkStablecoin(StablecoinSchema.parse(snapshot.payload));
         default:
           return null;
@@ -67,39 +69,31 @@ export function registerReplayRoute(app: FastifyInstance) {
     }
   );
 
-  app.post(
+  app.post<{
+    Body: z.infer<typeof ReplayBody>;
+    Reply: z.infer<typeof ReplayResponse>;
+  }>(
     '/replay',
     {
       schema: {
-        body: z.object({
-          category: RiskCategoryEnum,
-          payload: z.unknown(),
-        }),
-        response: {
-          200: {
-            anyOf: [RiskFlagSelectSchema, { type: 'null' }],
-          },
-        },
+        body: ReplayBody,
+        response: { 200: ReplayResponse },
       },
     },
     async (req) => {
-      const { category, payload } = req.body as {
-        category: RiskCategory;
-        payload: unknown;
-      };
-
+      const { category, payload } = req.body;
       switch (category) {
-        case 'OfficeREIT':
+        case RiskCategoryEnum.enum.OfficeREIT:
           return checkOfficeREIT(OfficeReitSchema.parse(payload));
-        case 'HealthcareRollup':
+        case RiskCategoryEnum.enum.HealthcareRollup:
           return checkHealthcareRollup(HealthcareRollupSchema.parse(payload));
-        case 'RegionalBank':
+        case RiskCategoryEnum.enum.RegionalBank:
           return checkRegionalBank(RegionalBankSchema.parse(payload));
-        case 'BDC':
+        case RiskCategoryEnum.enum.BDC:
           return checkBDC(BdcSchema.parse(payload));
-        case 'Stablecoin':
+        case RiskCategoryEnum.enum.Stablecoin:
           return checkStablecoin(StablecoinSchema.parse(payload));
-        case 'CoreBank':
+        case RiskCategoryEnum.enum.CoreBank:
           return checkCoreBank(CoreBankSchema.parse(payload));
         default:
           return null;

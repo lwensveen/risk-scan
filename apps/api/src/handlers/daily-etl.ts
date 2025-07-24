@@ -1,18 +1,19 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Receiver } from '@upstash/qstash';
+import { z } from 'zod';
 import {
   detectCategoryFromTicker,
   ingestSnapshots,
   upsertFlag,
 } from '@risk-scan/etl';
 import { runCoreBankRisk } from '@risk-scan/engine-core';
-import getRawBody from 'raw-body';
 import { runTailRisk } from '@risk-scan/engine-tail';
 import { RiskFlagEnum, riskScanConfig } from '@risk-scan/types';
 import { invalidateCache, sendSlackFlags } from '@risk-scan/utils';
 import { fetchLatest10KFootnote } from '@risk-scan/etl/dist/queries/fetch-10k-footnote.js';
 import { detectGoingConcern } from '@risk-scan/ai';
 import { persistFlags } from '@risk-scan/db';
+import getRawBody from 'raw-body';
 
 const receiver = new Receiver({
   currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY!,
@@ -21,8 +22,12 @@ const receiver = new Receiver({
     process.env.QSTASH_CURRENT_SIGNING_KEY!,
 });
 
-export function registerDailyETLHandler(app: FastifyInstance) {
-  app.post(
+const CheckGcQuery = z.object({ ticker: z.string().min(1) });
+
+export function registerInternalRoutes(fastify: FastifyInstance) {
+  fastify.post<{
+    Reply: null;
+  }>(
     '/internal/riskscan-daily',
     {
       preHandler: async (req: FastifyRequest, reply: FastifyReply) => {
@@ -38,10 +43,12 @@ export function registerDailyETLHandler(app: FastifyInstance) {
         });
         if (!valid) return reply.code(401).send({ error: 'Invalid signature' });
       },
-      schema: { response: { 204: { type: 'null' } } },
+      schema: {
+        response: { 204: z.null() },
+      },
     },
     async (_req, reply) => {
-      app.log.info('[qstash] daily ETL started');
+      fastify.log.info('[qstash] daily ETL started');
 
       await ingestSnapshots();
 
@@ -69,37 +76,29 @@ export function registerDailyETLHandler(app: FastifyInstance) {
     }
   );
 
-  app.post(
+  fastify.post<{
+    Querystring: z.infer<typeof CheckGcQuery>;
+    Reply:
+      | { ticker: string; goingConcern: boolean; flagged: boolean }
+      | { error: string };
+  }>(
     '/internal/check-gc',
     {
       schema: {
-        querystring: {
-          type: 'object',
-          required: ['ticker'],
-          properties: {
-            ticker: { type: 'string' },
-          },
-        },
+        querystring: CheckGcQuery,
         response: {
-          200: {
-            type: 'object',
-            properties: {
-              ticker: { type: 'string' },
-              goingConcern: { type: 'boolean' },
-              flagged: { type: 'boolean' },
-            },
-          },
-          404: {
-            type: 'object',
-            properties: {
-              error: { type: 'string' },
-            },
-          },
+          200: z.object({
+            ticker: z.string(),
+            goingConcern: z.boolean(),
+            flagged: z.boolean(),
+          }),
+          404: z.object({ error: z.string() }),
+          500: z.object({ error: z.string() }),
         },
       },
     },
     async (req, res) => {
-      const { ticker } = req.query as { ticker: string };
+      const { ticker } = req.query;
 
       try {
         const footnote = await fetchLatest10KFootnote(ticker);

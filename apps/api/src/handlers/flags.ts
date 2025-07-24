@@ -1,65 +1,72 @@
 import { FastifyInstance } from 'fastify';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 import {
   getFlagsByTicker,
   getFlagsFiltered,
   getLatestFlags,
   getLatestFlagsForTicker,
 } from '@risk-scan/etl';
-import { RiskFlagSelectSchema } from '@risk-scan/db';
 import { FlagsQuerySchema } from '@risk-scan/types';
+import { RiskFlagSelectSchema } from '@risk-scan/db';
 
-export function registerFlagsHandlers(app: FastifyInstance) {
-  app.get(
+export function registerFlagRoutes(app: FastifyInstance) {
+  app.get<{
+    Querystring: z.infer<typeof FlagsQuerySchema>;
+    Reply: z.infer<typeof RiskFlagSelectSchema>[];
+  }>(
     '/flags',
     {
       schema: {
         querystring: FlagsQuerySchema,
-        response: { 200: { type: 'array', items: RiskFlagSelectSchema } },
+        response: { 200: RiskFlagSelectSchema.array() },
       },
     },
     async (req) => {
-      const parsed = FlagsQuerySchema.parse(req.query);
-      const tickers = parsed.tickers?.split(',');
-      return getFlagsFiltered({ ...parsed, tickers });
+      const tickers = req.query.tickers?.split(',');
+      return getFlagsFiltered({ ...req.query, tickers });
     }
   );
 
-  app.get(
+  app.get<{
+    Reply: z.infer<typeof RiskFlagSelectSchema>[];
+  }>(
     '/flags/latest',
     {
-      config: { expiresIn: 60 },
-      schema: {
-        response: { 200: { type: 'array', items: RiskFlagSelectSchema } },
-      },
+      config: { cache: { expiresIn: 600 } },
+      schema: { response: { 200: RiskFlagSelectSchema.array() } },
     },
     () => getLatestFlags()
   );
 
-  app.get(
+  app.get<{
+    Params: { ticker: string };
+    Reply: z.infer<typeof RiskFlagSelectSchema>[];
+  }>(
     '/flags/:ticker',
     {
-      config: { expiresIn: 300 },
+      config: { cache: { expiresIn: 600 } },
       schema: {
-        params: { ticker: { type: 'string' } },
-        response: { 200: { type: 'array', items: RiskFlagSelectSchema } },
+        params: z.object({ ticker: z.string().min(1) }),
+        response: { 200: RiskFlagSelectSchema.array() },
       },
     },
-    (req) => getFlagsByTicker((req.params as any).ticker)
+    (req) => getFlagsByTicker(req.params.ticker)
   );
 
-  app.get(
+  app.get<{
+    Params: { ticker: string };
+    Reply: z.infer<typeof RiskFlagSelectSchema>[];
+  }>(
     '/flags/:ticker/latest',
     {
-      config: { expiresIn: 300 },
+      config: { cache: { expiresIn: 600 } },
       schema: {
-        params: z.object({ ticker: z.string() }),
-        response: { 200: { type: 'array', items: RiskFlagSelectSchema } },
+        params: z.object({ ticker: z.string().min(1) }),
+        response: { 200: RiskFlagSelectSchema.array() },
       },
     },
     async (req, res) => {
-      const { ticker } = req.params as { ticker: string };
-      const flags = await getLatestFlagsForTicker(ticker);
+      const flags = await getLatestFlagsForTicker(req.params.ticker);
       return res.send(flags);
     }
   );

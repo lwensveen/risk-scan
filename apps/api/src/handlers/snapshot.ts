@@ -1,31 +1,47 @@
 import { FastifyInstance } from 'fastify';
+import { z } from 'zod';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { getSnapshotByTicker, getSnapshotsFiltered } from '@risk-scan/etl';
 import { SnapshotQuerySchema } from '@risk-scan/types';
+import { EntitySnapshotSelectSchema } from '@risk-scan/db';
 
-export function registerSnapshotRoutes(fastify: FastifyInstance) {
-  fastify.get(
+const SnapshotParamsSchema = z.object({
+  ticker: z.string().min(1),
+});
+
+export function registerSnapshotRoutes(app: FastifyInstance) {
+  const fastify = app.withTypeProvider<ZodTypeProvider>();
+
+  fastify.get<{
+    Params: z.infer<typeof SnapshotParamsSchema>;
+    Reply: z.infer<typeof EntitySnapshotSelectSchema>[];
+  }>(
     '/snapshot/:ticker',
     {
-      config: { expiresIn: 600 },
+      config: { cache: { expiresIn: 600 } },
       schema: {
-        params: { ticker: { type: 'string' } },
-        response: { 200: { type: 'array', items: { type: 'object' } } },
+        params: SnapshotParamsSchema,
+        response: { 200: EntitySnapshotSelectSchema.array() },
       },
     },
-    (req) => getSnapshotByTicker((req.params as any).ticker)
+    async (req) => {
+      return getSnapshotByTicker(req.params.ticker);
+    }
   );
 
-  fastify.get(
+  fastify.get<{
+    Querystring: z.infer<typeof SnapshotQuerySchema>;
+    Reply: z.infer<typeof EntitySnapshotSelectSchema>[];
+  }>(
     '/snapshot',
     {
       schema: {
         querystring: SnapshotQuerySchema,
-        response: { 200: { type: 'array', items: { type: 'object' } } },
+        response: { 200: EntitySnapshotSelectSchema.array() },
       },
     },
     async (req) => {
-      const parsed = SnapshotQuerySchema.parse(req.query);
-      return getSnapshotsFiltered(parsed);
+      return getSnapshotsFiltered(req.query);
     }
   );
 }
