@@ -41,21 +41,25 @@ curl localhost:4000/flags/NVDA/latest
 ## Architecture
 
 ```mermaid
-graph TD
+flowchart TD
   subgraph Ingest
-    A[ETL (Yahoo, SEC, On-chain)] --> B[PostgreSQL]
+    A["ETL (Yahoo, SEC, On-chain)"] --> B[(PostgreSQL)]
   end
+
   subgraph Engine
-    B --> C[engine-core<br>Bank rules]
-    B --> D[engine-tail<br>REIT/BDC/Stablecoin]
+    B --> C["engine-core<br/>Bank rules"]
+    B --> D["engine-tail<br/>REIT/BDC/Stablecoin"]
   end
-  C --> E[Risk flags]
+
+  C --> E["Risk flags"]
   D --> E
+
   subgraph API
-    E --> F[Fastify JSON API]
+    E --> F["Fastify JSON API"]
   end
+
   subgraph Frontend
-    F --> G[Next.js dashboard]
+    F --> G["Next.js dashboard"]
   end
 ```
 
@@ -102,7 +106,7 @@ packages/
 | POST   | `/replay`                   | Ad‑hoc payload rule evaluation                                |
 
 _OpenAPI JSON spec coming soon._
- 
+
 ---
 
 ## Deployment
