@@ -11,6 +11,7 @@
     "@risk-scan/engine-core": "workspace:*",
     "@risk-scan/engine-tail": "workspace:*",
     "@risk-scan/etl": "workspace:*",
+    "@risk-scan/types": "workspace:*",
     "@risk-scan/utils": "workspace:*",
     "@upstash/qstash": "^2.8.1",
     "cache-manager-redis-yet": "^5.1.5",

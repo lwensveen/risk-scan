@@ -1,20 +1,13 @@
 import { FastifyInstance } from 'fastify';
 import { z } from 'zod/v4';
-import { categoryValues, RiskFlagSchema } from '@risk-scan/types';
 import {
   getFlagsByTicker,
   getFlagsFiltered,
   getLatestFlags,
   getLatestFlagsForTicker,
 } from '@risk-scan/etl';
-
-const FlagsQuerySchema = z.object({
-  tickers: z.string().optional(),
-  category: z.enum(categoryValues).optional(),
-  from: z.coerce.date().optional(),
-  to: z.coerce.date().optional(),
-  useCreatedAt: z.coerce.boolean().optional(),
-});
+import { RiskFlagSelectSchema } from '@risk-scan/db';
+import { FlagsQuerySchema } from '@risk-scan/types';
 
 export function registerFlagsHandlers(app: FastifyInstance) {
   app.get(
@@ -22,7 +15,7 @@ export function registerFlagsHandlers(app: FastifyInstance) {
     {
       schema: {
         querystring: FlagsQuerySchema,
-        response: { 200: { type: 'array', items: RiskFlagSchema } },
+        response: { 200: { type: 'array', items: RiskFlagSelectSchema } },
       },
     },
     async (req) => {
@@ -37,7 +30,7 @@ export function registerFlagsHandlers(app: FastifyInstance) {
     {
       config: { expiresIn: 60 },
       schema: {
-        response: { 200: { type: 'array', items: RiskFlagSchema } },
+        response: { 200: { type: 'array', items: RiskFlagSelectSchema } },
       },
     },
     () => getLatestFlags()
@@ -49,7 +42,7 @@ export function registerFlagsHandlers(app: FastifyInstance) {
       config: { expiresIn: 300 },
       schema: {
         params: { ticker: { type: 'string' } },
-        response: { 200: { type: 'array', items: RiskFlagSchema } },
+        response: { 200: { type: 'array', items: RiskFlagSelectSchema } },
       },
     },
     (req) => getFlagsByTicker((req.params as any).ticker)
@@ -61,7 +54,7 @@ export function registerFlagsHandlers(app: FastifyInstance) {
       config: { expiresIn: 300 },
       schema: {
         params: z.object({ ticker: z.string() }),
-        response: { 200: { type: 'array', items: RiskFlagSchema } },
+        response: { 200: { type: 'array', items: RiskFlagSelectSchema } },
       },
     },
     async (req, res) => {

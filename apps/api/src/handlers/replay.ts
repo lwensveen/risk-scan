@@ -14,10 +14,12 @@ import {
   HealthcareRollupSchema,
   OfficeReitSchema,
   RegionalBankSchema,
-  RiskFlagSchema,
+  RiskCategory,
+  RiskCategoryEnum,
   StablecoinSchema,
 } from '@risk-scan/types';
 import { checkCoreBank } from '@risk-scan/engine-core';
+import { RiskFlagSelectSchema } from '@risk-scan/db';
 
 export function registerReplayRoute(app: FastifyInstance) {
   app.get(
@@ -27,18 +29,12 @@ export function registerReplayRoute(app: FastifyInstance) {
         params: z
           .object({
             ticker: z.string(),
-            category: z.enum([
-              'OfficeREIT',
-              'HealthcareRollup',
-              'RegionalBank',
-              'BDC',
-              'Stablecoin',
-            ]),
+            category: RiskCategoryEnum,
           })
           .strict(),
         response: {
           200: {
-            anyOf: [RiskFlagSchema, { type: 'null' }],
+            anyOf: [RiskFlagSelectSchema, { type: 'null' }],
           },
         },
       },
@@ -57,7 +53,7 @@ export function registerReplayRoute(app: FastifyInstance) {
           return checkOfficeREIT(OfficeReitSchema.parse(snapshot.payload));
         case 'HealthcareRollup':
           return checkHealthcareRollup(
-            HealthcareRollupSchema.parse(snapshot.payload),
+            HealthcareRollupSchema.parse(snapshot.payload)
           );
         case 'RegionalBank':
           return checkRegionalBank(RegionalBankSchema.parse(snapshot.payload));
@@ -68,36 +64,27 @@ export function registerReplayRoute(app: FastifyInstance) {
         default:
           return null;
       }
-    },
+    }
   );
-
-  const CategoryEnum = z.enum([
-    'OfficeREIT',
-    'HealthcareRollup',
-    'RegionalBank',
-    'BDC',
-    'Stablecoin',
-    'CoreBank',
-  ]);
 
   app.post(
     '/replay',
     {
       schema: {
         body: z.object({
-          category: CategoryEnum,
+          category: RiskCategoryEnum,
           payload: z.unknown(),
         }),
         response: {
           200: {
-            anyOf: [RiskFlagSchema, { type: 'null' }],
+            anyOf: [RiskFlagSelectSchema, { type: 'null' }],
           },
         },
       },
     },
     async (req) => {
       const { category, payload } = req.body as {
-        category: z.infer<typeof CategoryEnum>;
+        category: RiskCategory;
         payload: unknown;
       };
 
@@ -117,6 +104,6 @@ export function registerReplayRoute(app: FastifyInstance) {
         default:
           return null;
       }
-    },
+    }
   );
 }

@@ -3,7 +3,6 @@ import { Receiver } from '@upstash/qstash';
 import {
   detectCategoryFromTicker,
   ingestSnapshots,
-  persistFlags,
   upsertFlag,
 } from '@risk-scan/etl';
 import { runCoreBankRisk } from '@risk-scan/engine-core';
@@ -13,6 +12,7 @@ import { RiskFlagEnum, riskScanConfig } from '@risk-scan/types';
 import { invalidateCache, sendSlackFlags } from '@risk-scan/utils';
 import { fetchLatest10KFootnote } from '@risk-scan/etl/dist/queries/fetch-10k-footnote.js';
 import { detectGoingConcern } from '@risk-scan/ai';
+import { persistFlags } from '@risk-scan/db';
 
 const receiver = new Receiver({
   currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY!,
