@@ -1,4 +1,5 @@
-import { Bdc, RiskFlag } from '@risk-scan/types';
+import { Bdc } from '@risk-scan/types';
+import { RiskFlag } from '@risk-scan/db';
 
 export function checkBDC(e: Bdc): RiskFlag | null {
   const flags: string[] = [];
@@ -14,7 +15,6 @@ export function checkBDC(e: Bdc): RiskFlag | null {
         ticker: e.ticker,
         flags,
         severity: flags.length >= 2 ? 'high' : 'medium',
-        ts: Date.now(),
       }
     : null;
 }

@@ -1,4 +1,5 @@
-import { CoreBank, RiskFlag } from '@risk-scan/types';
+import { CoreBank } from '@risk-scan/types';
+import { RiskFlag } from '@risk-scan/db';
 
 export function checkCoreBank(b: CoreBank): RiskFlag | null {
   const r: string[] = [];
@@ -12,7 +13,6 @@ export function checkCoreBank(b: CoreBank): RiskFlag | null {
   return {
     category: 'CoreBank',
     ticker: b.ticker,
-    ts: Date.now(),
     flags: r,
     severity: sev,
   } satisfies RiskFlag;

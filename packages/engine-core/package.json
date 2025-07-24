@@ -3,6 +3,7 @@
   "description": "Core‑bank risk engine for RiskScan (duration‑gap & LTV shock tests)",
   "version": "1.1.0",
   "dependencies": {
+    "@risk-scan/db": "workspace:*",
     "@risk-scan/etl": "workspace:*",
     "@risk-scan/types": "workspace:*",
     "axios": "^1.10.0",

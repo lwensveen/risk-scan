@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { CoreBankSchema, RiskFlag } from '@risk-scan/types';
+import { CoreBankSchema } from '@risk-scan/types';
 import { secConcept } from '@risk-scan/etl';
 import { checkCoreBank } from './rules/check-core-bank';
+import { RiskFlag } from '@risk-scan/db';
 
 const first = async (t: string, c: string) =>
   (await secConcept(t, c))[0]?.val ?? null;

@@ -1,4 +1,5 @@
-import { RegionalBank, RiskFlag } from '@risk-scan/types';
+import { RegionalBank } from '@risk-scan/types';
+import { RiskFlag } from '@risk-scan/db';
 
 export function checkRegionalBank(e: RegionalBank): RiskFlag | null {
   const flags: string[] = [];
@@ -13,7 +14,6 @@ export function checkRegionalBank(e: RegionalBank): RiskFlag | null {
         ticker: e.ticker,
         flags,
         severity: flags.length >= 2 ? 'high' : 'medium',
-        ts: Date.now(),
       }
     : null;
 }

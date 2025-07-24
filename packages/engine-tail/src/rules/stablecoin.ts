@@ -1,4 +1,5 @@
-import { RiskFlag, Stablecoin } from '@risk-scan/types';
+import { Stablecoin } from '@risk-scan/types';
+import { RiskFlag } from '@risk-scan/db';
 
 export function checkStablecoin(e: Stablecoin): RiskFlag | null {
   const flags: string[] = [];
@@ -12,7 +13,6 @@ export function checkStablecoin(e: Stablecoin): RiskFlag | null {
         ticker: e.symbol,
         flags,
         severity: flags.length >= 2 ? 'high' : 'medium',
-        ts: Date.now(),
       }
     : null;
 }

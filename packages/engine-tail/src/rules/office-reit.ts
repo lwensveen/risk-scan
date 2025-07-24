@@ -1,4 +1,5 @@
-import { OfficeReit, RiskFlag } from '@risk-scan/types';
+import { OfficeReit } from '@risk-scan/types';
+import { RiskFlag } from '@risk-scan/db';
 
 export function checkOfficeREIT(e: OfficeReit): RiskFlag | null {
   const flags: string[] = [];
@@ -13,7 +14,6 @@ export function checkOfficeREIT(e: OfficeReit): RiskFlag | null {
         ticker: e.ticker,
         flags,
         severity: flags.length >= 2 ? 'high' : 'medium',
-        ts: Date.now(),
       }
     : null;
 }

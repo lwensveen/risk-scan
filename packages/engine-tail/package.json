@@ -3,6 +3,7 @@
   "description": "Tail‑risk rule engine for RiskScan (REIT, Bank, BDC, Stablecoin checks)",
   "version": "1.1.0",
   "dependencies": {
+    "@risk-scan/db": "workspace:*",
     "@risk-scan/etl": "workspace:*",
     "@risk-scan/types": "workspace:*",
     "@risk-scan/utils": "workspace:*",

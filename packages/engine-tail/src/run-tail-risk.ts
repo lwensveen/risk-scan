@@ -1,4 +1,4 @@
-import { RiskFlag, TailRiskConfig } from '@risk-scan/types';
+import { TailRiskConfig } from '@risk-scan/types';
 import {
   fetchBDC,
   fetchHealthcareRollup,
@@ -11,6 +11,7 @@ import { checkHealthcareRollup } from './rules/healthcare-rollup.js';
 import { checkRegionalBank } from './rules/regional-bank.js';
 import { checkBDC } from './rules/bdc.js';
 import { checkStablecoin } from './rules/stablecoin.js';
+import { RiskFlag } from '@risk-scan/db';
 
 export async function runTailRisk(cfg: TailRiskConfig): Promise<RiskFlag[]> {
   const out: (RiskFlag | null)[] = [];

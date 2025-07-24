@@ -1,4 +1,5 @@
-import { HealthcareRollup, RiskFlag } from '@risk-scan/types';
+import { HealthcareRollup } from '@risk-scan/types';
+import { RiskFlag } from '@risk-scan/db';
 
 export function checkHealthcareRollup(e: HealthcareRollup): RiskFlag | null {
   const flags: string[] = [];
@@ -13,7 +14,6 @@ export function checkHealthcareRollup(e: HealthcareRollup): RiskFlag | null {
         ticker: e.ticker,
         flags,
         severity: flags.length >= 2 ? 'high' : 'medium',
-        ts: Date.now(),
       }
     : null;
 }
