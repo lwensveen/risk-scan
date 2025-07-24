@@ -1,5 +1,8 @@
 {
   "name": "risk-platform",
+  "bin": {
+    "risk-scan": "bin/risk-scan.ts"
+  },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.1",
     "@changesets/cli": "^2.29.5",
@@ -24,11 +27,13 @@
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint -- --fix",
     "prepare": "husky",
+    "risk": "bun run bin/risk-scan.ts",
     "test": "vitest run",
     "test:ci": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "seed-demo": "bunx ts-node packages/etl/scripts/seed-demo.ts"
   },
   "trustedDependencies": [
     "@tailwindcss/oxide",
