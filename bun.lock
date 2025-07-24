@@ -35,7 +35,7 @@
         "dotenv": "^17.2.0",
         "fastify": "^5.4.0",
         "raw-body": "^3.0.0",
-        "zod": "^4.0.5",
+        "zod": "^4.0.8",
       },
       "devDependencies": {
         "@risk-scan/eslint-config": "workspace:*",
@@ -65,7 +65,7 @@
         "react-dom": "^19.1.0",
         "recharts": "^3.1.0",
         "tailwind-merge": "^3.3.1",
-        "zod": "^4.0.5",
+        "zod": "^4.0.8",
       },
       "devDependencies": {
         "@risk-scan/eslint-config": "workspace:*",
@@ -89,7 +89,7 @@
         "@risk-scan/types": "workspace:*",
         "node-fetch": "^3.3.2",
         "openai": "^5.10.2",
-        "zod": "^4.0.5",
+        "zod": "^4.0.8",
       },
       "devDependencies": {
         "@risk-scan/eslint-config": "workspace:*",
@@ -108,7 +108,7 @@
         "drizzle-zod": "^0.8.2",
         "pg": "^8.16.3",
         "ws": "^8.18.3",
-        "zod": "^4.0.5",
+        "zod": "^4.0.8",
       },
       "devDependencies": {
         "@risk-scan/eslint-config": "workspace:*",
@@ -126,9 +126,9 @@
         "@risk-scan/db": "workspace:*",
         "@risk-scan/etl": "workspace:*",
         "@risk-scan/types": "workspace:*",
-        "axios": "^1.10.0",
+        "axios": "^1.11.0",
         "yahoo-finance2": "^3.5.0",
-        "zod": "^4.0.5",
+        "zod": "^4.0.8",
       },
       "devDependencies": {
         "@risk-scan/eslint-config": "workspace:*",
@@ -146,9 +146,9 @@
         "@risk-scan/etl": "workspace:*",
         "@risk-scan/types": "workspace:*",
         "@risk-scan/utils": "workspace:*",
-        "axios": "^1.10.0",
+        "axios": "^1.11.0",
         "yahoo-finance2": "^3.5.0",
-        "zod": "^4.0.5",
+        "zod": "^4.0.8",
       },
       "devDependencies": {
         "@risk-scan/eslint-config": "workspace:*",
@@ -185,7 +185,7 @@
         "@risk-scan/utils": "workspace:*",
         "axios": "^1.11.0",
         "yahoo-finance2": "^3.5.0",
-        "zod": "^4.0.5",
+        "zod": "^4.0.8",
       },
       "devDependencies": {
         "@types/node": "^24.1.0",
@@ -199,7 +199,7 @@
       "version": "1.1.0",
       "dependencies": {
         "drizzle-zod": "^0.8.2",
-        "zod": "^4.0.5",
+        "zod": "^4.0.8",
       },
       "devDependencies": {
         "@risk-scan/eslint-config": "workspace:*",
@@ -218,7 +218,7 @@
       "dependencies": {
         "@risk-scan/db": "workspace:*",
         "node-fetch": "^3.3.2",
-        "zod": "^4.0.5",
+        "zod": "^4.0.8",
       },
       "devDependencies": {
         "@risk-scan/eslint-config": "workspace:*",
@@ -1908,7 +1908,7 @@
 
     "yocto-queue": ["yocto-queue@0.1.0", "", {}, "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q=="],
 
-    "zod": ["zod@4.0.7", "", {}, "sha512-AKvYUuvqmyRf21eNxjuO++WPrQHhWg8i/4POzBLL//qVhcxA6gOptSDxXKM2S+uh8FtPV3MU/QZKOxqwsRV5kg=="],
+    "zod": ["zod@4.0.8", "", {}, "sha512-+MSh9cZU9r3QKlHqrgHMTSr3QwMGv4PLfR0M4N/sYWV5/x67HgXEhIGObdBkpnX8G78pTgWnIrBL2lZcNJOtfg=="],
 
     "zod-validation-error": ["zod-validation-error@3.5.3", "", { "peerDependencies": { "zod": "^3.25.0 || ^4.0.0" } }, "sha512-OT5Y8lbUadqVZCsnyFaTQ4/O2mys4tj7PqhdbBCp7McPwvIEKfPtdA6QfPeFQK2/Rz5LgwmAXRJTugBNBi0btw=="],
 
