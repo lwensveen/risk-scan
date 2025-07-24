@@ -17,8 +17,10 @@
     "cache-manager-redis-yet": "^5.1.5",
     "dotenv": "^17.2.0",
     "fastify": "^5.4.0",
+    "fastify-type-provider-zod": "^5.0.2",
     "raw-body": "^3.0.0",
-    "zod": "^4.0.8"
+    "zod": "^4.0.8",
+    "zod-to-json-schema": "^3.24.6"
   },
   "devDependencies": {
     "@risk-scan/eslint-config": "workspace:*",
