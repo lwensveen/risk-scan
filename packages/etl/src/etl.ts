@@ -21,7 +21,7 @@ import {
   RiskSeverityEnum,
   StablecoinSchema,
 } from '@risk-scan/types';
-import { entitySnapshotsTable, riskFlagsTable } from './db/schema.js';
+import { entitySnapshotsTable, riskFlagsTable } from '@risk-scan/db';
 import { fetchLatest10KFootnote } from './queries/fetch-10k-footnote.js';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -120,6 +120,11 @@ export async function ingestSnapshots() {
   console.log('✅ ETL run complete');
 }
 
-if (require.main === module) {
-  ingestSnapshots().then(() => process.exit(0));
+export async function main() {
+  await ingestSnapshots();
+  process.exit(0);
+}
+
+if (typeof require !== 'undefined' && require.main === module) {
+  main();
 }

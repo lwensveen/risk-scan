@@ -1,6 +1,5 @@
 import { and, desc, eq, gte, inArray, lte } from 'drizzle-orm';
-import { entitySnapshotsTable, riskFlagsTable } from '../db/schema.js';
-import { db } from '../db/client.js';
+import { db, entitySnapshotsTable, riskFlagsTable } from '@risk-scan/db';
 import { RiskCategory } from '@risk-scan/types';
 
 export interface FlagsFilter {

@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { and, eq, sql } from 'drizzle-orm';
-import { cikCacheTable } from '../db/schema.js';
-import { db } from '../db/client.js';
+import { cikCacheTable, db } from '@risk-scan/db';
 
 async function loadMasterList(): Promise<Record<string, string>> {
   const { data } = await axios.get(
