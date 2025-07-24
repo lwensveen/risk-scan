@@ -1,10 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ingestSnapshots } from './etl.js';
 import { fetchLatest10KFootnote } from './queries/fetch-10k-footnote.js';
-import * as fetchers from './utils/fetch.js';
 import { riskScanConfig } from '@risk-scan/types';
+import { fetchOfficeREIT } from './fetchers/office-reit.js';
+import { fetchHealthcareRollup } from './fetchers/healthcare-rollup.js';
+import { fetchRegionalBank } from './fetchers/regional-bank.js';
+import { fetchBDC } from './fetchers/bdc.js';
+import { fetchStablecoin } from './fetchers/stablecoin.js';
 
-const { mockDb, insertSpy, parseSpyMap } = vi.hoisted(() => {
+const {
+  mockDb,
+  insertSpy,
+
+  parseSpyMap,
+} = vi.hoisted(() => {
   const insertSpy = vi.fn();
   const valuesSpy = vi.fn();
   const onConflictDoUpdateSpy = vi.fn();
@@ -27,12 +36,6 @@ const { mockDb, insertSpy, parseSpyMap } = vi.hoisted(() => {
     Stablecoin: vi.fn((x) => x),
   };
 
-  const exitSpy = vi
-    .spyOn(process, 'exit')
-    .mockImplementation(() => undefined as never);
-
-  const fakeRequire = { main: { filename: '/abs/path/etl.js' } };
-
   return {
     mockDb,
     insertSpy,
@@ -40,20 +43,20 @@ const { mockDb, insertSpy, parseSpyMap } = vi.hoisted(() => {
     onConflictDoUpdateSpy,
     onConflictDoNothingSpy,
     parseSpyMap,
-    exitSpy,
-    fakeRequire,
   };
 });
 
 vi.mock('dotenv/config', () => ({}));
+
 vi.mock('@neondatabase/serverless', () => ({
   Pool: vi.fn(() => ({})),
 }));
+
 vi.mock('drizzle-orm/neon-serverless', () => ({
   drizzle: vi.fn(() => mockDb),
 }));
 
-vi.mock('./utils/fetch.js', () => ({
+vi.mock('./fetchers/office-reit.js', () => ({
   fetchOfficeREIT: vi.fn(async (t: string) => ({
     ticker: t,
     vacancyRateYoY: 10,
@@ -62,6 +65,9 @@ vi.mock('./utils/fetch.js', () => ({
     ffo: 1,
     interestExpense: 1,
   })),
+}));
+
+vi.mock('./fetchers/healthcare-rollup.js', () => ({
   fetchHealthcareRollup: vi.fn(async (t: string) => ({
     ticker: t,
     debt: 1,
@@ -70,6 +76,9 @@ vi.mock('./utils/fetch.js', () => ({
     totalAssets: 1,
     sameStoreVisitsYoY: 1,
   })),
+}));
+
+vi.mock('./fetchers/regional-bank.js', () => ({
   fetchRegionalBank: vi.fn(async (t: string) => ({
     ticker: t,
     creLoans: 1,
@@ -77,7 +86,16 @@ vi.mock('./utils/fetch.js', () => ({
     liquidAssets: 1,
     deposits: 1,
     npaMoM: 1,
+    htmSecurities: null,
+    aoci: null,
+    tier1Capital: 0,
+    uninsuredDeposits: null,
+    totalDeposits: 1,
+    totalAssets: 1,
   })),
+}));
+
+vi.mock('./fetchers/bdc.js', () => ({
   fetchBDC: vi.fn(async (t: string) => ({
     ticker: t,
     yieldPercent: 1,
@@ -87,6 +105,9 @@ vi.mock('./utils/fetch.js', () => ({
     loanLossReserves: 1,
     totalLoans: 1,
   })),
+}));
+
+vi.mock('./fetchers/stablecoin.js', () => ({
   fetchStablecoin: vi.fn(async (s: string) => ({
     symbol: s,
     collateralRatio: 1,
@@ -186,16 +207,16 @@ describe('ingestSnapshots', () => {
     expect(parseSpyMap.BDC).toHaveBeenCalledTimes(2);
     expect(parseSpyMap.Stablecoin).toHaveBeenCalledTimes(2);
 
-    expect(fetchers.fetchOfficeREIT).toHaveBeenCalledWith('O1');
-    expect(fetchers.fetchOfficeREIT).toHaveBeenCalledWith('O2');
-    expect(fetchers.fetchHealthcareRollup).toHaveBeenCalledWith('H1');
-    expect(fetchers.fetchHealthcareRollup).toHaveBeenCalledWith('H2');
-    expect(fetchers.fetchRegionalBank).toHaveBeenCalledWith('R1');
-    expect(fetchers.fetchRegionalBank).toHaveBeenCalledWith('R2');
-    expect(fetchers.fetchBDC).toHaveBeenCalledWith('B1');
-    expect(fetchers.fetchBDC).toHaveBeenCalledWith('B2');
-    expect(fetchers.fetchStablecoin).toHaveBeenCalledWith('S1');
-    expect(fetchers.fetchStablecoin).toHaveBeenCalledWith('S2');
+    expect(fetchOfficeREIT).toHaveBeenCalledWith('O1');
+    expect(fetchOfficeREIT).toHaveBeenCalledWith('O2');
+    expect(fetchHealthcareRollup).toHaveBeenCalledWith('H1');
+    expect(fetchHealthcareRollup).toHaveBeenCalledWith('H2');
+    expect(fetchRegionalBank).toHaveBeenCalledWith('R1');
+    expect(fetchRegionalBank).toHaveBeenCalledWith('R2');
+    expect(fetchBDC).toHaveBeenCalledWith('B1');
+    expect(fetchBDC).toHaveBeenCalledWith('B2');
+    expect(fetchStablecoin).toHaveBeenCalledWith('S1');
+    expect(fetchStablecoin).toHaveBeenCalledWith('S2');
 
     expect(
       (fetchLatest10KFootnote as any).mock.calls.map((c: any[]) => c[0])

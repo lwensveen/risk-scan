@@ -71,3 +71,18 @@ export function detectCategoryFromTicker(ticker: string): RiskCategory {
   }
   throw new Error(`Unknown category for ticker: ${ticker}`);
 }
+
+export const m = (...mods: any[]): any[] => mods;
+
+export const num = (val: unknown): number => {
+  if (typeof val === 'number') return val;
+  if (
+    val !== null &&
+    typeof val === 'object' &&
+    'raw' in val &&
+    typeof (val as { raw: unknown }).raw === 'number'
+  ) {
+    return (val as { raw: number }).raw;
+  }
+  return 0;
+};

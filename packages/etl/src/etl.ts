@@ -1,12 +1,5 @@
 import 'dotenv/config';
 import { Pool } from '@neondatabase/serverless';
-import {
-  fetchBDC,
-  fetchHealthcareRollup,
-  fetchOfficeREIT,
-  fetchRegionalBank,
-  fetchStablecoin,
-} from './utils/fetch.js';
 import { drizzle } from 'drizzle-orm/neon-serverless';
 import {
   BdcSchema,
@@ -23,6 +16,11 @@ import {
 } from '@risk-scan/types';
 import { entitySnapshotsTable, riskFlagsTable } from '@risk-scan/db';
 import { fetchLatest10KFootnote } from './queries/fetch-10k-footnote.js';
+import { fetchOfficeREIT } from './fetchers/office-reit.js';
+import { fetchHealthcareRollup } from './fetchers/healthcare-rollup.js';
+import { fetchRegionalBank } from './fetchers/regional-bank.js';
+import { fetchBDC } from './fetchers/bdc.js';
+import { fetchStablecoin } from './fetchers/stablecoin.js';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const db = drizzle(pool);
@@ -45,7 +43,7 @@ export async function upsertFlag(
     .onConflictDoNothing();
 }
 
-async function upsertSnapshot(
+export async function upsertSnapshot(
   category: RiskCategory,
   ticker: string,
   payload: any
