@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { RiskFlag } from '@risk-scan/types';
+import { RiskFlag } from '@risk-scan/db';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -59,7 +59,7 @@ export default function FlagsPage() {
           <CardContent className="space-y-3">
             {items.map((f) => (
               <div
-                key={`${f.ticker}-${f.ts}`}
+                key={`${f.ticker}-${f.updatedAt}`}
                 className="flex flex-col md:flex-row md:items-center md:justify-between gap-2"
               >
                 <span className="font-mono text-sm md:w-28">{f.ticker}</span>
@@ -73,7 +73,7 @@ export default function FlagsPage() {
                 </div>
 
                 <span className="text-xs text-muted-foreground md:text-right md:w-32">
-                  {new Date(Number(f.ts)).toLocaleDateString()}
+                  {new Date(Number(f.updatedAt)).toLocaleDateString()}
                 </span>
               </div>
             ))}

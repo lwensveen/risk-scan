@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { RiskFlag } from '@risk-scan/types';
+import { RiskFlag } from '@risk-scan/db';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DateRangeToggle } from '@/components/charts/date-range-toggle';

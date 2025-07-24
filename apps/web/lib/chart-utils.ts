@@ -1,4 +1,4 @@
-import { RiskFlag } from '@risk-scan/types';
+import { RiskFlag } from '@risk-scan/db';
 import { toPng } from 'html-to-image';
 
 export type ChartRow = { date: string; [ticker: string]: number | string };
@@ -8,11 +8,10 @@ export function groupFlagsByDate(
   tickers: string[],
   mode: 'count' | 'avg'
 ): ChartRow[] {
-  // map should always include every selected ticker
   const grouped: Record<string, Record<string, number>> = {};
 
   for (const f of flags) {
-    const date = new Date(Number(f.ts)).toISOString().slice(0, 10);
+    const date = new Date(Number(f.updatedAt)).toISOString().slice(0, 10);
     const row = (grouped[date] ??= {});
     row[f.ticker] = (row[f.ticker] ?? 0) + 1;
   }
@@ -57,24 +56,17 @@ export function stringifyTickers(tickers: string[]): string {
   return tickers.join(',');
 }
 
-/* ------------------------------------------------------------------------- */
-/* 🎨  Color palette used across charts & badges                              */
-/* ------------------------------------------------------------------------- */
 export const COLOR_PALETTE = [
-  '#4f46e5', // indigo‑600
-  '#22c55e', // green‑500
-  '#ec4899', // pink‑500
-  '#f59e0b', // amber‑500
-  '#06b6d4', // cyan‑500
-  '#a855f7', // violet‑500
-  '#f43f5e', // rose‑500
-  '#10b981', // emerald‑500
+  '#4f46e5',
+  '#22c55e',
+  '#ec4899',
+  '#f59e0b',
+  '#06b6d4',
+  '#a855f7',
+  '#f43f5e',
+  '#10b981',
 ];
 
-/* ------------------------------------------------------------------------- */
-/* 📤  CSV export                                                            */
-
-/* ------------------------------------------------------------------------- */
 export function exportToCSV(
   rows: Record<string, any>[],
   tickers: string[],
@@ -95,10 +87,6 @@ export function exportToCSV(
   URL.revokeObjectURL(url);
 }
 
-/* ------------------------------------------------------------------------- */
-/* 🖼️  PNG export (capture any DOM node)                                     */
-
-/* ------------------------------------------------------------------------- */
 export async function exportToPNG(
   chartRef: React.RefObject<HTMLElement | null>,
   filename = `risk-flags-${Date.now()}.png`
