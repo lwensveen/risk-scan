@@ -5,9 +5,9 @@
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://www.conventionalcommits.org/en/v1.0.0/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6.svg)
-![Runtime: Bun + Node](https://img.shields.io/badge/runtime-bun%20%2B%20node-000?logo=bun\&logoColor=fff)
+![Runtime: Bun + Node](https://img.shields.io/badge/runtime-bun%20%2B%20node-000?logo=bun&logoColor=fff)
 [![Vitest](https://img.shields.io/badge/tested%20with-vitest-6E9F18.svg)](https://vitest.dev/)
-[![Turborepo](https://img.shields.io/badge/monorepo-turborepo-000000.svg?logo=vercel\&logoColor=white)](https://turbo.build/repo)
+[![Turborepo](https://img.shields.io/badge/monorepo-turborepo-000000.svg?logo=vercel&logoColor=white)](https://turbo.build/repo)
 [![OpenAPI Docs](https://img.shields.io/badge/docs-openapi-blue.svg)](https://lwensveen.github.io/risk-scan/)
 
 **RiskScan** is a full‑stack, TypeScript‑first platform that surfaces emerging financial risks.
@@ -84,7 +84,7 @@ packages/
 ## Web dashboard highlights
 
 | Feature              | Path                                | Notes                         |
-|----------------------|-------------------------------------|-------------------------------|
+| -------------------- | ----------------------------------- | ----------------------------- |
 | **Flag table**       | `apps/web/app/(dashboard)/flags`    | Severity badges, copy‑to‑CSV  |
 | **Ticker compare**   | `apps/web/app/(dashboard)/compare`  | Multi‑series chart (Recharts) |
 | **Snapshot details** | `apps/web/app/(dashboard)/[ticker]` | Raw metrics + rule breakdown  |
@@ -96,7 +96,7 @@ packages/
 ## 🔌 API summary
 
 | Method | Endpoint                    | Description                                                   |
-|--------|-----------------------------|---------------------------------------------------------------|
+| ------ | --------------------------- | ------------------------------------------------------------- |
 | POST   | `/internal/daily-risk-scan` | QStash‑signed webhook → runs ETL + engines                    |
 | GET    | `/flags`                    | Filter by `tickers`, `category`, `from`, `to`, `useCreatedAt` |
 | GET    | `/flags/:ticker`            | All flags for one ticker                                      |

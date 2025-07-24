@@ -1,12 +1,14 @@
 import { FastifyInstance } from 'fastify';
-import { registerDailyETLHandler } from '../handlers/daily-etl.js';
-import { registerFlagsHandlers } from '../handlers/flags.js';
+import { registerInternalRoutes } from '../handlers/daily-etl.js';
+import { registerFlagRoutes } from '../handlers/flags.js';
+import { registerReplayRoutes } from '../handlers/replay.js';
 import { registerSnapshotRoutes } from '../handlers/snapshot.js';
-import { registerReplayRoute } from '../handlers/replay.js';
+import { registerMetaRoutes } from '../handlers/meta.js';
 
 export async function registerRoutes(fastify: FastifyInstance) {
-  registerFlagsHandlers(fastify);
+  registerFlagRoutes(fastify);
+  registerInternalRoutes(fastify);
+  registerMetaRoutes(fastify);
+  registerReplayRoutes(fastify);
   registerSnapshotRoutes(fastify);
-  registerReplayRoute(fastify);
-  registerDailyETLHandler(fastify);
 }

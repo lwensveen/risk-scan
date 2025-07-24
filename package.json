@@ -21,6 +21,7 @@
   "packageManager": "bun@1.2.17",
   "private": true,
   "scripts": {
+    "api:openapi": "bun apps/api/src/scripts/openapi.ts",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
@@ -28,12 +29,12 @@
     "lint:fix": "turbo run lint -- --fix",
     "prepare": "husky",
     "risk": "bun run bin/risk-scan.ts",
+    "seed-demo": "bunx ts-node packages/etl/scripts/seed-demo.ts",
     "test": "vitest run",
     "test:ci": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
-    "typecheck": "turbo run typecheck",
-    "seed-demo": "bunx ts-node packages/etl/scripts/seed-demo.ts"
+    "typecheck": "turbo run typecheck"
   },
   "trustedDependencies": [
     "@tailwindcss/oxide",
