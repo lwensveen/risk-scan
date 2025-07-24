@@ -5,5 +5,5 @@ export * from './domains/office-reit.js';
 export * from './domains/regional-bank.js';
 export * from './domains/stablecoin.js';
 export * from './enums.js';
-export * from './risk-flag.js';
+export * from './schemas/api.js';
 export * from './tickers.js';

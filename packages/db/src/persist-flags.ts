@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { RiskFlag } from '@risk-scan/types';
+import { RiskFlag } from './types.js';
 import { sql } from 'drizzle-orm';
 import { riskFlagsTable } from './schema.js';
 
@@ -16,7 +16,6 @@ export async function persistFlags(flags: RiskFlag[], pool?: Pool) {
     ticker: f.ticker,
     flags: f.flags,
     severity: f.severity,
-    ts: f.ts,
   }));
 
   await db

@@ -1,6 +1,6 @@
 {
   "name": "@risk-scan/ai",
-  "description": "Utility helpers for RiskScan (Slack, Upstash cache, etc.)",
+  "description": "AI/LLM helpers for RiskScan (OpenAI client, Zod schemas, Slack + Upstash cache)",
   "version": "0.0.0",
   "dependencies": {
     "@risk-scan/types": "workspace:*",

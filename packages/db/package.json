@@ -1,15 +1,22 @@
 {
-  "name": "@risk-scan/types",
+  "name": "@risk-scan/db",
   "description": "Shared Zod schemas & TypeScript types for RiskScan monorepo",
   "version": "1.1.0",
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
+    "@risk-scan/types": "workspace:*",
+    "drizzle-orm": "^0.44.3",
     "drizzle-zod": "^0.8.2",
+    "pg": "^8.16.3",
+    "ws": "^8.18.3",
     "zod": "^4.0.5"
   },
   "devDependencies": {
     "@risk-scan/eslint-config": "workspace:*",
     "@risk-scan/typescript-config": "workspace:*",
     "@types/node": "^24.1.0",
+    "@types/pg": "^8.15.4",
+    "@types/ws": "^8.18.1",
     "eslint": "^9.31.0"
   },
   "files": [

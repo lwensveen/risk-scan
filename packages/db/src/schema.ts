@@ -69,6 +69,3 @@ export const cikCacheTable = pgTable('cik_cache', {
   createdAt: createTimestampColumn('created_at'),
   updatedAt: createTimestampColumn('updated_at', true),
 });
-
-export type EntitySnapshotRow = typeof entitySnapshotsTable.$inferSelect;
-export type RiskFlagRow = typeof riskFlagsTable.$inferSelect;
