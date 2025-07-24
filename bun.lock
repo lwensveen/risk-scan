@@ -8,6 +8,7 @@
         "@changesets/cli": "^2.29.5",
         "@commitlint/config-conventional": "^19.8.1",
         "@vitest/coverage-v8": "^3.2.4",
+        "husky": "^9.1.7",
         "prettier": "^3.6.2",
         "syncpack": "^13.0.4",
         "turbo": "^2.5.5",
@@ -27,6 +28,7 @@
         "@risk-scan/engine-core": "workspace:*",
         "@risk-scan/engine-tail": "workspace:*",
         "@risk-scan/etl": "workspace:*",
+        "@risk-scan/types": "workspace:*",
         "@risk-scan/utils": "workspace:*",
         "@upstash/qstash": "^2.8.1",
         "cache-manager-redis-yet": "^5.1.5",
@@ -96,10 +98,32 @@
         "eslint": "^9.31.0",
       },
     },
+    "packages/db": {
+      "name": "@risk-scan/db",
+      "version": "1.1.0",
+      "dependencies": {
+        "@neondatabase/serverless": "^1.0.1",
+        "@risk-scan/types": "workspace:*",
+        "drizzle-orm": "^0.44.3",
+        "drizzle-zod": "^0.8.2",
+        "pg": "^8.16.3",
+        "ws": "^8.18.3",
+        "zod": "^4.0.5",
+      },
+      "devDependencies": {
+        "@risk-scan/eslint-config": "workspace:*",
+        "@risk-scan/typescript-config": "workspace:*",
+        "@types/node": "^24.1.0",
+        "@types/pg": "^8.15.4",
+        "@types/ws": "^8.18.1",
+        "eslint": "^9.31.0",
+      },
+    },
     "packages/engine-core": {
       "name": "@risk-scan/engine-core",
       "version": "1.1.0",
       "dependencies": {
+        "@risk-scan/db": "workspace:*",
         "@risk-scan/etl": "workspace:*",
         "@risk-scan/types": "workspace:*",
         "axios": "^1.10.0",
@@ -118,6 +142,7 @@
       "name": "@risk-scan/engine-tail",
       "version": "1.1.0",
       "dependencies": {
+        "@risk-scan/db": "workspace:*",
         "@risk-scan/etl": "workspace:*",
         "@risk-scan/types": "workspace:*",
         "@risk-scan/utils": "workspace:*",
@@ -154,21 +179,16 @@
       "name": "@risk-scan/etl",
       "version": "2.0.0",
       "dependencies": {
-        "@neondatabase/serverless": "^1.0.1",
         "@risk-scan/ai": "workspace:*",
+        "@risk-scan/db": "workspace:*",
         "@risk-scan/types": "workspace:*",
         "@risk-scan/utils": "workspace:*",
         "axios": "^1.11.0",
-        "drizzle-orm": "^0.44.3",
-        "pg": "^8.16.3",
-        "ws": "^8.18.3",
         "yahoo-finance2": "^3.5.0",
         "zod": "^4.0.5",
       },
       "devDependencies": {
         "@types/node": "^24.1.0",
-        "@types/pg": "^8.15.4",
-        "@types/ws": "^8.18.1",
         "drizzle-kit": "^0.31.4",
         "eslint": "^9.31.0",
         "typescript": "5.8.3",
@@ -178,6 +198,7 @@
       "name": "@risk-scan/types",
       "version": "1.1.0",
       "dependencies": {
+        "drizzle-zod": "^0.8.2",
         "zod": "^4.0.5",
       },
       "devDependencies": {
@@ -195,7 +216,7 @@
       "name": "@risk-scan/utils",
       "version": "1.1.0",
       "dependencies": {
-        "@risk-scan/types": "workspace:*",
+        "@risk-scan/db": "workspace:*",
         "node-fetch": "^3.3.2",
         "zod": "^4.0.5",
       },
@@ -576,6 +597,8 @@
     "@risk-scan/ai": ["@risk-scan/ai@workspace:packages/ai"],
 
     "@risk-scan/api": ["@risk-scan/api@workspace:apps/api"],
+
+    "@risk-scan/db": ["@risk-scan/db@workspace:packages/db"],
 
     "@risk-scan/engine-core": ["@risk-scan/engine-core@workspace:packages/engine-core"],
 
@@ -965,6 +988,8 @@
 
     "drizzle-orm": ["drizzle-orm@0.44.3", "", { "peerDependencies": { "@aws-sdk/client-rds-data": ">=3", "@cloudflare/workers-types": ">=4", "@electric-sql/pglite": ">=0.2.0", "@libsql/client": ">=0.10.0", "@libsql/client-wasm": ">=0.10.0", "@neondatabase/serverless": ">=0.10.0", "@op-engineering/op-sqlite": ">=2", "@opentelemetry/api": "^1.4.1", "@planetscale/database": ">=1.13", "@prisma/client": "*", "@tidbcloud/serverless": "*", "@types/better-sqlite3": "*", "@types/pg": "*", "@types/sql.js": "*", "@upstash/redis": ">=1.34.7", "@vercel/postgres": ">=0.8.0", "@xata.io/client": "*", "better-sqlite3": ">=7", "bun-types": "*", "expo-sqlite": ">=14.0.0", "gel": ">=2", "knex": "*", "kysely": "*", "mysql2": ">=2", "pg": ">=8", "postgres": ">=3", "sql.js": ">=1", "sqlite3": ">=5" }, "optionalPeers": ["@aws-sdk/client-rds-data", "@cloudflare/workers-types", "@electric-sql/pglite", "@libsql/client", "@libsql/client-wasm", "@neondatabase/serverless", "@op-engineering/op-sqlite", "@opentelemetry/api", "@planetscale/database", "@prisma/client", "@tidbcloud/serverless", "@types/better-sqlite3", "@types/pg", "@types/sql.js", "@upstash/redis", "@vercel/postgres", "@xata.io/client", "better-sqlite3", "bun-types", "expo-sqlite", "gel", "knex", "kysely", "mysql2", "pg", "postgres", "sql.js", "sqlite3"] }, "sha512-8nIiYQxOpgUicEL04YFojJmvC4DNO4KoyXsEIqN44+g6gNBr6hmVpWk3uyAt4CaTiRGDwoU+alfqNNeonLAFOQ=="],
 
+    "drizzle-zod": ["drizzle-zod@0.8.2", "", { "peerDependencies": { "drizzle-orm": ">=0.36.0", "zod": "^3.25.1" } }, "sha512-9Do/16OjFFNrQDZgvMtxtDDwKWbFOxUAIwNPKX98SfxrP8H18vhN1BvNXbhelLcdgCE7GEaXDJqBjMExSkhpkA=="],
+
     "dunder-proto": ["dunder-proto@1.0.1", "", { "dependencies": { "call-bind-apply-helpers": "^1.0.1", "es-errors": "^1.3.0", "gopd": "^1.2.0" } }, "sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A=="],
 
     "eastasianwidth": ["eastasianwidth@0.2.0", "", {}, "sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA=="],
@@ -1183,6 +1208,8 @@
 
     "humanize-url": ["humanize-url@2.1.1", "", { "dependencies": { "normalize-url": "^4.5.1" } }, "sha512-V4nxsPGNE7mPjr1qDp471YfW8nhBiTRWrG/4usZlpvFU8I7gsV7Jvrrzv/snbLm5dWO3dr1ennu2YqnhTWFmYA=="],
 
+    "husky": ["husky@9.1.7", "", { "bin": { "husky": "bin.js" } }, "sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA=="],
+
     "iconv-lite": ["iconv-lite@0.6.3", "", { "dependencies": { "safer-buffer": ">= 2.1.2 < 3.0.0" } }, "sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw=="],
 
     "ignore": ["ignore@5.3.2", "", {}, "sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g=="],
@@ -1283,7 +1310,7 @@
 
     "jackspeak": ["jackspeak@3.4.3", "", { "dependencies": { "@isaacs/cliui": "^8.0.2" }, "optionalDependencies": { "@pkgjs/parseargs": "^0.11.0" } }, "sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw=="],
 
-    "jiti": ["jiti@2.4.2", "", { "bin": { "jiti": "lib/jiti-cli.mjs" } }, "sha512-rg9zJN+G4n2nfJl5MW3BMygZX56zKPNVEYYqq7adpmMh4Jn2QNEwhvQlFy6jPVdcod7txZtKHWnyZiA3a0zP7A=="],
+    "jiti": ["jiti@2.5.0", "", { "bin": { "jiti": "lib/jiti-cli.mjs" } }, "sha512-NWDAhdnATItTnRhip9VTd8oXDjVcbhetRN6YzckApnXGxpGUooKMAaf0KVvlZG0+KlJMGkeLElVn4M1ReuxKUQ=="],
 
     "jose": ["jose@5.10.0", "", {}, "sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg=="],
 
@@ -1361,7 +1388,7 @@
 
     "loose-envify": ["loose-envify@1.4.0", "", { "dependencies": { "js-tokens": "^3.0.0 || ^4.0.0" }, "bin": { "loose-envify": "cli.js" } }, "sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q=="],
 
-    "loupe": ["loupe@3.1.4", "", {}, "sha512-wJzkKwJrheKtknCOKNEtDK4iqg/MxmZheEMtSTYvnzRdEYaZzmgH976nenp8WdJRdx5Vc1X/9MO0Oszl6ezeXg=="],
+    "loupe": ["loupe@3.2.0", "", {}, "sha512-2NCfZcT5VGVNX9mSZIxLRkEAegDGBpuQZBy13desuHeVORmBDyAET4TkJr4SjqQy3A8JDofMN6LpkK8Xcm/dlw=="],
 
     "lru-cache": ["lru-cache@10.4.3", "", {}, "sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ=="],
 
@@ -1881,7 +1908,7 @@
 
     "yocto-queue": ["yocto-queue@0.1.0", "", {}, "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q=="],
 
-    "zod": ["zod@4.0.5", "", {}, "sha512-/5UuuRPStvHXu7RS+gmvRf4NXrNxpSllGwDnCBcJZtQsKrviYXm54yDGV2KYNLT5kq0lHGcl7lqWJLgSaG+tgA=="],
+    "zod": ["zod@4.0.7", "", {}, "sha512-AKvYUuvqmyRf21eNxjuO++WPrQHhWg8i/4POzBLL//qVhcxA6gOptSDxXKM2S+uh8FtPV3MU/QZKOxqwsRV5kg=="],
 
     "zod-validation-error": ["zod-validation-error@3.5.3", "", { "peerDependencies": { "zod": "^3.25.0 || ^4.0.0" } }, "sha512-OT5Y8lbUadqVZCsnyFaTQ4/O2mys4tj7PqhdbBCp7McPwvIEKfPtdA6QfPeFQK2/Rz5LgwmAXRJTugBNBi0btw=="],
 
@@ -1962,6 +1989,8 @@
     "ajv-formats/ajv": ["ajv@8.17.1", "", { "dependencies": { "fast-deep-equal": "^3.1.3", "fast-uri": "^3.0.1", "json-schema-traverse": "^1.0.0", "require-from-string": "^2.0.2" } }, "sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g=="],
 
     "dir-glob/path-type": ["path-type@4.0.0", "", {}, "sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw=="],
+
+    "drizzle-zod/zod": ["zod@3.25.76", "", {}, "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ=="],
 
     "eslint/@eslint/js": ["@eslint/js@9.31.0", "", {}, "sha512-LOm5OVt7D4qiKCqoiPbA7LWmI+tbw1VbTUowBcUMgQSuM6poJufkFkYDcQpo5KfgD39TnNySV26QjOh7VFpSyw=="],
 

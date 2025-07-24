@@ -6,10 +6,14 @@ export default defineConfig({
       provider: 'v8',
       include: ['packages/*/src/**/*.{ts,tsx}'],
       exclude: [
-        'packages/types/**/*.ts',
-        '**/*.test.ts',
         '**/*.d.ts',
+        '**/*.test.ts',
+        '**/client.ts',
+        '**/index.ts',
         '**/node_modules/**',
+        '**/schema.ts',
+        '**/types.ts',
+        'packages/types/**/*.ts',
       ],
       thresholds: {
         lines: 80,

@@ -5,6 +5,7 @@
     "@changesets/cli": "^2.29.5",
     "@commitlint/config-conventional": "^19.8.1",
     "@vitest/coverage-v8": "^3.2.4",
+    "husky": "^9.1.7",
     "prettier": "^3.6.2",
     "syncpack": "^13.0.4",
     "turbo": "^2.5.5",
@@ -18,10 +19,16 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "check-types": "turbo run check-types",
+    "typecheck": "turbo run typecheck",
     "dev": "turbo run dev",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "lint": "turbo run lint"
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint -- --fix",
+    "prepare": "husky",
+    "test": "vitest run",
+    "test:ci": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest"
   },
   "trustedDependencies": [
     "@tailwindcss/oxide",
