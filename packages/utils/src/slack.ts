@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { RiskFlag } from '@risk-scan/types';
+import { RiskFlag } from '@risk-scan/db';
 
 export async function sendSlackFlags(
   flags: RiskFlag[],
