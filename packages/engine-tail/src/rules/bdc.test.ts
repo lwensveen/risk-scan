@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { checkBDC } from './bdc.js';
-import type { Bdc } from '@risk-scan/types';
+import { Bdc, RiskFlagEnum } from '@risk-scan/types';
 
 describe('checkBDC', () => {
   const base: Bdc = {
@@ -20,13 +20,13 @@ describe('checkBDC', () => {
 
   it('flags unsustainable yield if yield > 12% and NAV is flat/down', () => {
     const result = checkBDC({ ...base, yieldPercent: 0.13, navChangeYoY: 0 });
-    expect(result?.flags).toContain('🚩 Unsustainable yield');
+    expect(result?.flags).toContain(RiskFlagEnum.UnsustainableYield);
     expect(result?.severity).toBe('medium');
   });
 
   it('flags net outflows when redemptions > inflows', () => {
     const result = checkBDC({ ...base, redemptions: 100, newInflows: 50 });
-    expect(result?.flags).toContain('🚩 Net outflows');
+    expect(result?.flags).toContain(RiskFlagEnum.NetOutflows);
     expect(result?.severity).toBe('medium');
   });
 
@@ -36,7 +36,7 @@ describe('checkBDC', () => {
       loanLossReserves: 20,
       totalLoans: 1000,
     });
-    expect(result?.flags).toContain('🚩 Thin loss reserves (<3 %)');
+    expect(result?.flags).toContain(RiskFlagEnum.ThinLossReserves);
     expect(result?.severity).toBe('medium');
   });
 
@@ -74,7 +74,9 @@ describe('checkBDC', () => {
       loanLossReserves: 50,
       totalLoans: 1000,
     });
-    expect(highYieldMissingNav?.flags).toContain('🚩 Unsustainable yield');
+    expect(highYieldMissingNav?.flags).toContain(
+      RiskFlagEnum.UnsustainableYield
+    );
 
     const noOutflowFlag = checkBDC({
       ticker: 'ARCC',
@@ -96,6 +98,6 @@ describe('checkBDC', () => {
       loanLossReserves: 50,
       totalLoans: 1000,
     });
-    expect(outflowFlag?.flags).toContain('🚩 Net outflows');
+    expect(outflowFlag?.flags).toContain(RiskFlagEnum.NetOutflows);
   });
 });

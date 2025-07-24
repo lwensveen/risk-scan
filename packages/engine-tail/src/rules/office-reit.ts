@@ -1,12 +1,15 @@
-import { OfficeReit } from '@risk-scan/types';
+import { OfficeReit, RiskFlagEnum } from '@risk-scan/types';
 import { RiskFlag } from '@risk-scan/db';
 
 export function checkOfficeREIT(e: OfficeReit): RiskFlag | null {
-  const flags: string[] = [];
-  if ((e.vacancyRateYoY ?? 0) > 0.1) flags.push('🚩 Vacancy spike (>10 % YoY)');
+  const flags: RiskFlagEnum[] = [];
+
+  if ((e.vacancyRateYoY ?? 0) > 0.1) flags.push(RiskFlagEnum.VacancySpike);
+
   if (e.debtDueNext2Y / e.totalDebt > 0.4)
-    flags.push('🚩 Maturity wall (>40 % due <2 y)');
-  if (e.ffo < e.interestExpense) flags.push('🚩 FFO < interest');
+    flags.push(RiskFlagEnum.MaturityWall);
+
+  if (e.ffo < e.interestExpense) flags.push(RiskFlagEnum.FFOBelowInterest);
 
   return flags.length
     ? {

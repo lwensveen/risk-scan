@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { checkStablecoin } from './stablecoin.js';
-import type { Stablecoin } from '@risk-scan/types';
+import { RiskFlagEnum, Stablecoin } from '@risk-scan/types';
 
 describe('checkStablecoin', () => {
   const base: Stablecoin = {
@@ -17,19 +17,19 @@ describe('checkStablecoin', () => {
 
   it('flags under-collateralisation if ratio < 1.5', () => {
     const result = checkStablecoin({ ...base, collateralRatio: 1.4 });
-    expect(result?.flags).toContain('🚩 Under‑collateralised (<150 %)');
+    expect(result?.flags).toContain(RiskFlagEnum.UnderCollateralised);
     expect(result?.severity).toBe('medium');
   });
 
   it('flags concentrated supply if topHolderShare > 20%', () => {
     const result = checkStablecoin({ ...base, topHolderShare: 0.25 });
-    expect(result?.flags).toContain('🚩 Concentrated supply (>20 %)');
+    expect(result?.flags).toContain(RiskFlagEnum.ConcentratedSupply);
     expect(result?.severity).toBe('medium');
   });
 
   it('flags TVL outflows if tvlChange7d < -5%', () => {
     const result = checkStablecoin({ ...base, tvlChange7d: -0.06 });
-    expect(result?.flags).toContain('🚩 TVL outflows (>5 %)');
+    expect(result?.flags).toContain(RiskFlagEnum.TVLOutflows);
     expect(result?.severity).toBe('medium');
   });
 

@@ -1,12 +1,15 @@
-import { HealthcareRollup } from '@risk-scan/types';
+import { HealthcareRollup, RiskFlagEnum } from '@risk-scan/types';
 import { RiskFlag } from '@risk-scan/db';
 
 export function checkHealthcareRollup(e: HealthcareRollup): RiskFlag | null {
-  const flags: string[] = [];
-  if (e.debt / e.ebitda > 6) flags.push('🚩 Over‑leveraged (>6× EBITDA)');
+  const flags: RiskFlagEnum[] = [];
+
+  if (e.debt / e.ebitda > 6) flags.push(RiskFlagEnum.OverLeveraged);
+
   if ((e.leaseObligationsOffBS ?? 0) / e.totalAssets > 0.3)
-    flags.push('🚩 Hidden leases (>30 %)');
-  if ((e.sameStoreVisitsYoY ?? 0) < 0) flags.push('🚩 Patient decline');
+    flags.push(RiskFlagEnum.HiddenLeases);
+
+  if ((e.sameStoreVisitsYoY ?? 0) < 0) flags.push(RiskFlagEnum.PatientDecline);
 
   return flags.length
     ? {

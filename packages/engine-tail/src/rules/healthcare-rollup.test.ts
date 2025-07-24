@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { checkHealthcareRollup } from './healthcare-rollup.js';
-import type { HealthcareRollup } from '@risk-scan/types';
+import { HealthcareRollup, RiskFlagEnum } from '@risk-scan/types';
 
 describe('checkHealthcareRollup', () => {
   const base: HealthcareRollup = {
@@ -19,7 +19,7 @@ describe('checkHealthcareRollup', () => {
 
   it('flags over-leveraged if debt/ebitda > 6', () => {
     const result = checkHealthcareRollup({ ...base, debt: 700, ebitda: 100 });
-    expect(result?.flags).toContain('🚩 Over‑leveraged (>6× EBITDA)');
+    expect(result?.flags).toContain(RiskFlagEnum.OverLeveraged);
     expect(result?.severity).toBe('medium');
   });
 
@@ -28,13 +28,13 @@ describe('checkHealthcareRollup', () => {
       ...base,
       leaseObligationsOffBS: 200,
     });
-    expect(result?.flags).toContain('🚩 Hidden leases (>30 %)');
+    expect(result?.flags).toContain(RiskFlagEnum.HiddenLeases);
     expect(result?.severity).toBe('medium');
   });
 
   it('flags patient decline if sameStoreVisitsYoY < 0', () => {
     const result = checkHealthcareRollup({ ...base, sameStoreVisitsYoY: -5 });
-    expect(result?.flags).toContain('🚩 Patient decline');
+    expect(result?.flags).toContain(RiskFlagEnum.PatientDecline);
     expect(result?.severity).toBe('medium');
   });
 

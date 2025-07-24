@@ -1,13 +1,17 @@
-import { Bdc } from '@risk-scan/types';
+import { Bdc, RiskFlagEnum } from '@risk-scan/types';
 import { RiskFlag } from '@risk-scan/db';
 
 export function checkBDC(e: Bdc): RiskFlag | null {
-  const flags: string[] = [];
+  const flags: RiskFlagEnum[] = [];
+
   if (e.yieldPercent > 0.12 && (e.navChangeYoY ?? 0) <= 0)
-    flags.push('🚩 Unsustainable yield');
-  if ((e.redemptions ?? 0) > (e.newInflows ?? 0)) flags.push('🚩 Net outflows');
+    flags.push(RiskFlagEnum.UnsustainableYield);
+
+  if ((e.redemptions ?? 0) > (e.newInflows ?? 0))
+    flags.push(RiskFlagEnum.NetOutflows);
+
   if ((e.loanLossReserves ?? Infinity) / e.totalLoans < 0.03)
-    flags.push('🚩 Thin loss reserves (<3 %)');
+    flags.push(RiskFlagEnum.ThinLossReserves);
 
   return flags.length
     ? {
