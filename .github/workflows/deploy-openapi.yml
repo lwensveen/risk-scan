@@ -1,0 +1,33 @@
+name: Publish OpenAPI docs
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy-openapi:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node & Bun
+        uses: ./.github/actions/setup-node-bun
+        with:
+          node-version: '22'
+          bun-version: 'latest'
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Generate OpenAPI
+        run: bun run api:openapi
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs
+          publish_branch: gh-pages
