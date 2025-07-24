@@ -46,8 +46,8 @@ graph TD
     A[ETL (Yahoo, SEC, On‑chain)] --> B[PostgreSQL]
   end
   subgraph Engine
-    B --> C[engine‑core\nBank rules]
-    B --> D[engine‑tail\nREIT/BDC/Stablecoin]
+    B --> C[engine‑core<br>Bank rules]
+    B --> D[engine‑tail<br>REIT/BDC/Stablecoin]
   end
   C --> E[Risk flags]
   D --> E
