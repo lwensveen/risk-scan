@@ -6,9 +6,9 @@
     "@risk-scan/db": "workspace:*",
     "@risk-scan/etl": "workspace:*",
     "@risk-scan/types": "workspace:*",
-    "axios": "^1.10.0",
+    "axios": "^1.11.0",
     "yahoo-finance2": "^3.5.0",
-    "zod": "^4.0.5"
+    "zod": "^4.0.8"
   },
   "devDependencies": {
     "@risk-scan/eslint-config": "workspace:*",

@@ -9,7 +9,7 @@
     "@risk-scan/utils": "workspace:*",
     "axios": "^1.11.0",
     "yahoo-finance2": "^3.5.0",
-    "zod": "^4.0.5"
+    "zod": "^4.0.8"
   },
   "devDependencies": {
     "@types/node": "^24.1.0",

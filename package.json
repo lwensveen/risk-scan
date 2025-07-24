@@ -19,7 +19,6 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "typecheck": "turbo run typecheck",
     "dev": "turbo run dev",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
@@ -28,7 +27,8 @@
     "test": "vitest run",
     "test:ci": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "typecheck": "turbo run typecheck"
   },
   "trustedDependencies": [
     "@tailwindcss/oxide",
