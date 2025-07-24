@@ -1,16 +1,16 @@
-# RiskScan – real‑time financial risk scanner
+# RiskScan – financial risk scanner
 
 [![CI](https://github.com/lwensveen/risk-scan/actions/workflows/ci.yml/badge.svg)](https://github.com/lwensveen/risk-scan/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/lwensveen/risk-scan/branch/main/graph/badge.svg)](https://codecov.io/gh/lwensveen/risk-scan)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://www.conventionalcommits.org/en/v1.0.0/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6.svg)
-![Runtime: Bun + Node](https://img.shields.io/badge/runtime-bun%20%2B%20node-000?logo=bun&logoColor=fff)
+![Runtime: Bun + Node](https://img.shields.io/badge/runtime-bun%20%2B%20node-000?logo=bun\&logoColor=fff)
 [![Vitest](https://img.shields.io/badge/tested%20with-vitest-6E9F18.svg)](https://vitest.dev/)
-[![Turborepo](https://img.shields.io/badge/monorepo-turborepo-000000.svg?logo=vercel&logoColor=white)](https://turbo.build/repo)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/lwensveen/risk-scan/issues)
+[![Turborepo](https://img.shields.io/badge/monorepo-turborepo-000000.svg?logo=vercel\&logoColor=white)](https://turbo.build/repo)
+[![OpenAPI Docs](https://img.shields.io/badge/docs-openapi-blue.svg)](https://lwensveen.github.io/risk-scan/)
 
-**RiskScan** is a full‑stack, TypeScript‑first platform that surfaces emerging financial risks in real‑time.
+**RiskScan** is a full‑stack, TypeScript‑first platform that surfaces emerging financial risks.
 
 - **ETL(serverless)** → pulls structured data from Yahoo Finance, SEC API, FRED, on‑chain sources, etc.
 - **Risk Engine** → pluggable rule sets (`engine‑core`, `engine‑tail`) create human‑readable risk flags.
@@ -32,7 +32,7 @@ docker compose up -d
 # ingest three sample tickers (≈ 30s)
 bun run seed-demo
 
-# query the latest flag
+# fetch the latest flag
 curl localhost:4000/flags/NVDA/latest
 ```
 
@@ -93,7 +93,7 @@ packages/
 
 ---
 
-## API summary
+## 🔌 API summary
 
 | Method | Endpoint                    | Description                                                   |
 |--------|-----------------------------|---------------------------------------------------------------|
@@ -105,7 +105,8 @@ packages/
 | GET    | `/replay/:ticker/:category` | Re‑run rules on latest snapshot                               |
 | POST   | `/replay`                   | Ad‑hoc payload rule evaluation                                |
 
-_OpenAPI JSON spec coming soon._
+[OpenAPI JSON spec](https://lwensveen.github.io/risk-scan/openapi.json) — auto‑generated in CI
+[SVB collapse demo case](https://lwensveen.github.io/risk-scan/svb-case.html)
 
 ---
 
