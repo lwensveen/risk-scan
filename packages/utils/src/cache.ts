@@ -70,7 +70,7 @@ function upstashClient(url: string, token: string): CacheClient {
         );
         return null;
       }
-       
+
       return (await res.json()) as any;
     } catch (err) {
       warnOnce(
