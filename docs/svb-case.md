@@ -6,81 +6,119 @@
 
 ## TL;DR
 
-| Month        | Public signal                                                                             | RiskScan flag                     |
-| ------------ | ----------------------------------------------------------------------------------------- | --------------------------------- |
-| **Mar 2022** | HTM (“held‑to‑maturity”) securities pass \$90 bn (≈ 57 % of total assets).                | `HTMConcentration` (severity ⚠️)  |
-| **Jun 2022** | Unrealised HTM losses > **\$1.3 bn**.                                                     | `UnrealisedLosses↑` (severity ⚠️) |
-| **Sep 2022** | Unrealised losses hit **\$15 bn**; equity = \$16 bn → **94 %** of equity eroded on paper. | `EquityWipeoutRisk` (severity 🚨) |
-| **Dec 2022** | Moody’s warns of downgrade.                                                               | `CreditWatch` (severity ⚠️)       |
-| **Mar 2023** | 48h deposit run; FDIC takeover.                                                           | —                                 |
+| Month        | Public signal                                                                    | RiskScan flag                                               |
+| ------------ | -------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Mar 2022** | HTM ("held-to-maturity") securities pass \$90bn (≈ 57% of total assets).         | `HTMConcentration` (⚠️ Medium)                              |
+| **Jun 2022** | Unrealised HTM losses > **\$1.3bn**.                                             | `UnrealisedLosses` (⚠️ Medium)                              |
+| **Sep 2022** | Unrealised losses \~ **\$15bn** vs equity \~ \$16bn (paper equity nearly wiped). | **Composite high**: `UnrealisedLosses` + `HTMConcentration` |
+| **Dec 2022** | Moody’s warns of downgrade.                                                      | — _(informational)_                                         |
+| **Mar 2023** | 48‑hour deposit run; FDIC takeover.                                              | —                                                           |
 
-RiskScan’s `EquityWipeoutRisk` + `GoingConcern` combo would have triggered six months before the bank run, giving
-portfolio managers ample time to de‑risk.
+RiskScan’s composite rules would have escalated SVB to **High** by **Sep 2022**, giving PMs \~six months to de‑risk.
 
 ---
 
-## 1 HTM losses balloon (chart)
+## 1) Signals over time
 
 ```mermaid
-%% Placeholder: replace with PNG in README if desired
-flowchart LR
-  subgraph 2022
-    Q1[Q1 ‑ $1.3 bn]
-    Q2[Q2 ‑ $6.7 bn]
-    Q3[Q3 ‑ $15 bn]
-  end
-  Q1 --> Q2 --> Q3
+timeline
+    title SVB public signals (2022→2023)
+    Mar 2022 : HTM > $90bn (~57% assets)
+    Jun 2022 : Unrealised HTM losses > $1.3bn
+    Sep 2022 : Unrealised losses ~ $15bn; equity ~ $16bn (≈94% eroded on paper)
+    Dec 2022 : Moody's places SVB on review for downgrade
+    Mar 2023 : 48h deposit run; FDIC takeover
 ```
 
-_Real data source: SVB 10‑Q filings, Note 3 (Available‑For‑Sale & Held‑To‑Maturity securities)._
-
-**Risk rule** (`engine‑core`):
-
-```ts
-if (unrealisedHtmLoss / totalEquity > 0.5) {
-  addFlag(RiskFlag.EquityWipeoutRisk, Severity.High);
-}
-```
-
-Outcome: fires on 10‑Q (Sep 30 2022) → High‑severity flag published next day.
+_Source: SVB 10‑Q filings (2022 Q1–Q3), rating‑agency releases, FDIC._
 
 ---
 
-## 2 Liquidity stress visible in footnotes
+## 2) Why the balance‑sheet structure was fragile
 
-SVB’s Sep 2022 10‑Q footnote 13 (“Liquidity risk”) includes:
+```mermaid
+flowchart TD
+  A[Rate hikes 2022] --> B[AFS/HTM bond prices fall]
+  B --> C[Large unrealised losses (HTM)]
+  C --> D[Equity coverage thins]
+  D --> E[Depositors grow nervous]
+  E --> F[Outflows accelerate]
+  F --> G[Forced AFS sales → realise losses]
+  G --> H[Solvency & liquidity spiral]
+  H --> I[FDIC receivership]
+```
 
-> “_There is substantial doubt about the Company’s ability to meet its liquidity obligations in a timely manner should
-> deposit outflows accelerate…_”
-
-RiskScan’s **`detectGoingConcern`** prompt returns `true` → `GoingConcern` flag (severity 🚨).
+The **key issue** was the **mismatch**: long‑duration HTM fixed‑income vs. flight‑prone deposits. Unrealised HTM losses
+don’t hit P\&L, but they **do** hit economic value and **equity buffers**.
 
 ---
 
-## 3 Composite signal
+## 3) Risk rules (current implementation)
 
-| Flag                | Fired      | Severity  |
-| ------------------- | ---------- | --------- |
-| `HTMConcentration`  | 2022‑03‑31 | ⚠️ Medium |
-| `UnrealisedLosses↑` | 2022‑06‑30 | ⚠️ Medium |
-| `EquityWipeoutRisk` | 2022‑09‑30 | 🚨 High   |
-| `GoingConcern`      | 2022‑09‑30 | 🚨 High   |
+These checks are **implemented today** for regional banks:
 
-### Dashboard view (mock)
+- `CREConcentration` → **> 50%** CRE loans / total loans
+  `if ((creLoans ?? 0) / totalLoans > 0.5)`
 
-![Risk timeline](../assets/svb-risk-timeline.png)
+- `LowLiquidity` → **< 20%** liquid assets / deposits
+  `if (liquidAssets / deposits < 0.2)`
 
-Portfolio teams following RiskScan’s default filter (`severity >= High`) would have seen SVB highlighted in red by **Oct
-2022**, six months before the collapse.
+- `RisingNPAs` → NPAs **rising MoM**
+  `if ((npaMoM ?? 0) > 0)`
+
+- `HTMConcentration` → **> 40%** HTM securities / total assets
+  `if ((htmSecurities ?? 0) / totalAssets > 0.4)`
+
+- `UnrealisedLosses` → **AOCI / Tier1 < −30%** (i.e., unrealised losses > 30% of capital)
+  `if ((aoci ?? 0) / tier1Capital < -0.3)`
+
+- `UninsuredDeposits` → **> 60%** of total deposits
+  `if ((uninsuredDeposits ?? 0) / totalDeposits > 0.6)`
+
+**Severity model:** if **≥ 2 flags** fire, severity = **high**; otherwise **medium**.
+
+**Cross‑sector text signal:** `GoingConcern` is raised by a detector over filing text (regex first, LLM fallback), wired
+in ETL.
+
+> We **do not** emit an `EquityWipeoutRisk` flag today; the **composite** of `UnrealisedLosses` + `HTMConcentration` (
+> and often `UninsuredDeposits`) escalates severity to **High** and captures the same outcome.
+
+---
+
+## 4) End‑to‑end flow (daily)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant ETL as ETL (EDGAR, ratings, market)
+  participant Engine as Risk Engine
+  participant DB as Postgres
+  participant API as API
+  participant UI as Dashboard
+
+  ETL->>DB: Load 10‑Q tables (AFS/HTM), ratings, metadata
+  Engine->>DB: Compute flags per issuer (rules above)
+  API->>UI: /flags?severity=High
+  UI->>User: Highlight issuers with High severity (e.g., SVB in Oct 2022)
+```
+
+---
+
+## 5) Composite flag snapshot
+
+| Flag               | Fired on   | Severity  |
+| ------------------ | ---------- | --------- |
+| `HTMConcentration` | 2022‑03‑31 | ⚠️ Medium |
+| `UnrealisedLosses` | 2022‑06‑30 | ⚠️ Medium |
+| `GoingConcern`     | 2022‑09‑30 | 🚨 High   |
 
 ---
 
 ## References
 
-1. SVB Financial Group Form 10‑Q, quarters ending Mar 31, Jun 30, Sep 30 2022.
-2. FDIC press release, 10 Mar 2023.
+1. **SVB Financial Group** Forms 10‑Q (Q1–Q3 2022), esp. Note 3 (AFS/HTM).
+2. **FDIC** press release, Mar 10, 2023.
 3. Moody’s Investor Service, “SVB on Review for Downgrade”, 21 Dec 2022.
+4.
 
----
-
-_Generated 24 Jul 2025 — part of RiskScan demo deck._
+<sub>Numbers are rounded and indicative; exact figures vary by filing line‑item.</sub>
