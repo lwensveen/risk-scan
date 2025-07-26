@@ -84,7 +84,7 @@ packages/
 ## Web dashboard highlights
 
 | Feature              | Path                                | Notes                         |
-| -------------------- | ----------------------------------- | ----------------------------- |
+|----------------------|-------------------------------------|-------------------------------|
 | **Flag table**       | `apps/web/app/(dashboard)/flags`    | Severity badges, copy‑to‑CSV  |
 | **Ticker compare**   | `apps/web/app/(dashboard)/compare`  | Multi‑series chart (Recharts) |
 | **Snapshot details** | `apps/web/app/(dashboard)/[ticker]` | Raw metrics + rule breakdown  |
@@ -96,7 +96,7 @@ packages/
 ## 🔌 API summary
 
 | Method | Endpoint                    | Description                                                   |
-| ------ | --------------------------- | ------------------------------------------------------------- |
+|--------|-----------------------------|---------------------------------------------------------------|
 | POST   | `/internal/daily-risk-scan` | QStash‑signed webhook → runs ETL + engines                    |
 | GET    | `/flags`                    | Filter by `tickers`, `category`, `from`, `to`, `useCreatedAt` |
 | GET    | `/flags/:ticker`            | All flags for one ticker                                      |
@@ -105,7 +105,7 @@ packages/
 | GET    | `/replay/:ticker/:category` | Re‑run rules on latest snapshot                               |
 | POST   | `/replay`                   | Ad‑hoc payload rule evaluation                                |
 
-[OpenAPI JSON spec](https://lwensveen.github.io/risk-scan/openapi.json) — auto‑generated in CI
+[OpenAPI JSON spec](https://lwensveen.github.io/risk-scan/openapi.json) — auto‑generated in CI  
 [SVB collapse demo case](https://lwensveen.github.io/risk-scan/svb-case.html)
 
 ---
