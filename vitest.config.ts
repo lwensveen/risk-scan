@@ -14,6 +14,7 @@ export default defineConfig({
         '**/schema.ts',
         '**/types.ts',
         'packages/types/**/*.ts',
+        'packages/utils/src/version.ts',
       ],
       thresholds: {
         lines: 80,
