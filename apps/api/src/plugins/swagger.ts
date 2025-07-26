@@ -3,11 +3,16 @@ import swagger from '@fastify/swagger';
 import swaggerUI from '@fastify/swagger-ui';
 import {
   jsonSchemaTransform,
+  serializerCompiler,
+  validatorCompiler,
   ZodTypeProvider,
 } from 'fastify-type-provider-zod';
 import { VERSION } from '@risk-scan/utils';
 
 export default fp(async function swaggerPlugin(fastify) {
+  fastify.setValidatorCompiler(validatorCompiler);
+  fastify.setSerializerCompiler(serializerCompiler);
+
   fastify.withTypeProvider<ZodTypeProvider>();
 
   await fastify.register(swagger, {

@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { getSnapshotByTicker } from '@risk-scan/etl';
 import {
   checkBDC,

@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { getSnapshotByTicker, getSnapshotsFiltered } from '@risk-scan/etl';
 import { SnapshotQuerySchema } from '@risk-scan/types';

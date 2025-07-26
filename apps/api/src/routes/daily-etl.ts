@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Receiver } from '@upstash/qstash';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import {
   detectCategoryFromTicker,
   ingestSnapshots,
