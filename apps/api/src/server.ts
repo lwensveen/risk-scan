@@ -14,7 +14,7 @@ export async function buildServer() {
   await app.register(cors, { origin: '*' });
   await app.register(etag, { algorithm: 'sha1', weak: false });
   await app.register(swaggerPlugin);
-  
+
   const { UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, NODE_ENV } =
     process.env;
 
