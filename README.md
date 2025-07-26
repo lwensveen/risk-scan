@@ -8,33 +8,35 @@
 ![Runtime: Bun + Node](https://img.shields.io/badge/runtime-bun%20%2B%20node-000?logo=bun&logoColor=fff)
 [![Vitest](https://img.shields.io/badge/tested%20with-vitest-6E9F18.svg)](https://vitest.dev/)
 [![Turborepo](https://img.shields.io/badge/monorepo-turborepo-000000.svg?logo=vercel&logoColor=white)](https://turbo.build/repo)
-[![OpenAPI Docs](https://img.shields.io/badge/docs-openapi-blue.svg)](https://lwensveen.github.io/risk-scan/)
+[![OpenAPI Docs](https://img.shields.io/badge/docs-openapi-blue.svg)][swagger-ui]
 
 **RiskScan** is a full‑stack, TypeScript‑first platform that surfaces emerging financial risks.
 
-- **ETL(serverless)** → pulls structured data from Yahoo Finance, SEC API, FRED, on‑chain sources, etc.
-- **Risk Engine** → pluggable rule sets (`engine‑core`, `engine‑tail`) create human‑readable risk flags.
-- **API (Fastify)** → JSON endpoints for flags & snapshots plus a signed QStash webhook for daily ingest.
-- **Web Dashboard (Next 15 / Tailwind)** → interactive charts, ticker filters, CSV/PNG export.
+- **ETL (CLI + schedulable)** → pulls structured data (filings, ratings, market) into Postgres.
+- **Risk Engine** → pluggable rule sets (`engine-core`, `engine-tail`) emit human‑readable risk flags.
+- **API (Fastify)** → JSON endpoints for flags & replays; Swagger/OpenAPI generated in CI.
+- **Web Dashboard (Next.js)** → browse/search flags and drill into issuer snapshots.
 
 ---
 
-## 30‑second quick‑start (demo)
+## Quick start
 
 ```bash
+# 1) clone & install
 git clone https://github.com/lwensveen/risk-scan
 cd risk-scan
 bun install
 
-# run Postgres + API
+# 2) start Postgres & the API
 docker compose up -d
+cd apps/api && bun dev   # Fastify on http://localhost:4000
 
-# ingest three sample tickers (≈ 30s)
-bun run seed-demo
-
-# fetch the latest flag
-curl localhost:4000/flags/NVDA/latest
+# 3) Open API docs (Swagger UI)
+#    http://localhost:4000/docs  (when running locally)
+#    Or the hosted docs: https://lwensveen.github.io/risk-scan/
 ```
+
+> **Tip:** Example `.env.example` files exist for each app/package.
 
 ---
 
@@ -43,23 +45,23 @@ curl localhost:4000/flags/NVDA/latest
 ```mermaid
 flowchart TD
   subgraph Ingest
-    A["ETL (Yahoo, SEC, On-chain)"] --> B[(PostgreSQL)]
+    A[ETL: EDGAR/Ratings/Market] --> B[(PostgreSQL)]
   end
 
   subgraph Engine
-    B --> C["engine-core<br/>Bank rules"]
-    B --> D["engine-tail<br/>REIT/BDC/Stablecoin"]
+    B --> C[engine-core]
+    B --> D[engine-tail]
   end
 
-  C --> E["Risk flags"]
+  C --> E[Risk flags]
   D --> E
 
   subgraph API
-    E --> F["Fastify JSON API"]
+    E --> F[Fastify JSON API]
   end
 
   subgraph Frontend
-    F --> G["Next.js dashboard"]
+    F --> G[Next.js dashboard]
   end
 ```
 
@@ -69,64 +71,101 @@ flowchart TD
 
 ```
 apps/
-  api/   – Fastify server (ETL webhook + public JSON API)
-  web/   – Next.js 15 dashboard (client‑side charts)
+  api/   – Fastify server (docs + JSON API)
+  web/   – Next.js dashboard
 packages/
+  ai/           – going‑concern text detector
+  db/           – schema & persistence helpers (Drizzle)
   etl/          – snapshot ingestion & persistence
-  engine-core/  – Core banking risk rules
-  engine-tail/  – REIT / BDC / Stablecoin etc. rules
+  engine-core/  – core banking rules
+  engine-tail/  – REIT / BDC / Stablecoin / RegionalBank rules
   types/        – shared Zod schemas + enums
-  utils/        – QStash/Slack helpers, global config
+  utils/        – cache/slack helpers, config
 ```
 
 ---
 
-## Web dashboard highlights
-
-| Feature              | Path                                | Notes                         |
-|----------------------|-------------------------------------|-------------------------------|
-| **Flag table**       | `apps/web/app/(dashboard)/flags`    | Severity badges, copy‑to‑CSV  |
-| **Ticker compare**   | `apps/web/app/(dashboard)/compare`  | Multi‑series chart (Recharts) |
-| **Snapshot details** | `apps/web/app/(dashboard)/[ticker]` | Raw metrics + rule breakdown  |
-| Theme                | Radix UI + `next-themes`            | Auto dark/light               |
-| Export PNG           | Client‑side `html-to-image`         | Slide‑deck ready              |
-
----
-
-## 🔌 API summary
+## API summary
 
 | Method | Endpoint                    | Description                                                   |
-|--------|-----------------------------|---------------------------------------------------------------|
+| ------ | --------------------------- | ------------------------------------------------------------- |
 | POST   | `/internal/daily-risk-scan` | QStash‑signed webhook → runs ETL + engines                    |
 | GET    | `/flags`                    | Filter by `tickers`, `category`, `from`, `to`, `useCreatedAt` |
+| GET    | `/flags/latest`             | Latest flags across all tickers                               |
 | GET    | `/flags/:ticker`            | All flags for one ticker                                      |
 | GET    | `/flags/:ticker/latest`     | Latest flag for one ticker                                    |
-| GET    | `/snapshot`                 | Filter snapshots by ticker/date                               |
-| GET    | `/replay/:ticker/:category` | Re‑run rules on latest snapshot                               |
-| POST   | `/replay`                   | Ad‑hoc payload rule evaluation                                |
 
-[OpenAPI JSON spec](https://lwensveen.github.io/risk-scan/openapi.json) — auto‑generated in CI  
-[SVB collapse demo case](https://lwensveen.github.io/risk-scan/svb-case.html)
+- **OpenAPI JSON**: [openapi-json]
+- **Swagger UI**: [swagger-ui]
 
 ---
 
-## Deployment
+## Environment variables
 
-- **Database**: Neon or Supabase (PostgreSQL >= 15).
-- **Backend**(API + ETL): Vercel functions (Edge Runtime), QStash for scheduling.
-- **Frontend**: Vercel (Next.js 15). Set `NEXT_PUBLIC_API_URL` to your API URL.
+| Name                         | Where              | Notes                                   |
+| ---------------------------- | ------------------ | --------------------------------------- |
+| `DATABASE_URL`               | API, db, etl       | Postgres connection string              |
+| `UPSTASH_REDIS_REST_URL`     | optional (cache)   | Enables HTTP caching/invalidation       |
+| `UPSTASH_REDIS_REST_TOKEN`   | optional (cache)   | Upstash REST token                      |
+| `QSTASH_CURRENT_SIGNING_KEY` | optional (webhook) | Verify QStash webhook                   |
+| `QSTASH_NEXT_SIGNING_KEY`    | optional (webhook) | Verify QStash webhook (rotation)        |
+| `SLACK_WEBHOOK`              | optional           | Send summaries to Slack                 |
+| `OPENAI_API_KEY`             | optional           | LLM fallback for going‑concern detector |
+| `NEXT_PUBLIC_API_URL`        | web                | Base API URL for the dashboard          |
 
-One‑click deploy scripts live in `.github/workflows/`.
+> The API is import‑safe without cache: if Upstash vars are missing, it logs a warning and continues.
 
 ---
 
-## Roadmap
+## Development scripts
 
-- **Pagination & infinite scrolling** for large flag tables
-- **Full-text search** across flag descriptions and snapshots
-- **ML‑based confidence scoring** to prioritise high‑signal flags
-- **ESG & macro rule packs** (green bonds, inflation shocks, etc.)
-- **Portfolio view** – aggregate risk by user‑defined ticker baskets or wallet holdings
-- **OpenAPI JSON spec** + auto‑generated typed SDK
-- **Playground UI** for ad‑hoc `/replay` testing in the browser
-- **E2E tests** (Playwright) running in CI
+```bash
+# build everything
+bun run build
+
+# lint + type‑check
+bun run lint
+bun run typecheck
+
+# run tests (with coverage)
+bun run test:coverage
+
+# generate OpenAPI locally (writes docs/openapi.json by default)
+DISABLE_CACHE=1 bun run api:openapi
+```
+
+---
+
+## CI & Docs
+
+- **CI** (GitHub Actions): install → build → tests (coverage) → generate OpenAPI → upload coverage to Codecov.
+- **Docs (Pages)**: a Pages workflow builds `docs/` on every push to `main`:
+  - Generates `docs/openapi.json` from the server build
+  - Converts any `docs/*.md` to static `*.html` (Mermaid supported)
+  - Publishes `docs/` to GitHub Pages
+
+**Links**
+
+- **CI**: [ci-workflow]
+- **Pages**: [pages-workflow]
+
+---
+
+## Case study
+
+Read the SVB 2023 collapse walkthrough (with diagrams):
+
+- **SVB case (HTML)**: [svb-case]
+- **Source markdown**: [`docs/svb-case.md`](docs/svb-case.md)
+
+---
+
+## License
+
+MIT © Lodewijk Wensveen
+
+[openapi-json]: https://lwensveen.github.io/risk-scan/openapi.json
+[swagger-ui]: https://lwensveen.github.io/risk-scan/
+[ci-workflow]: https://github.com/lwensveen/risk-scan/actions/workflows/ci.yml
+[pages-workflow]: https://github.com/lwensveen/risk-scan/actions/workflows/pages.yml
+[svb-case]: https://lwensveen.github.io/risk-scan/svb-case.html
