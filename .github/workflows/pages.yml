@@ -1,0 +1,53 @@
+name: Pages
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-node-bun
+        with:
+          node-version: '22'
+          bun-version: 'latest'
+
+      - run: bun install --frozen-lockfile
+
+      - run: OPENAPI_OUT=docs/openapi.json DISABLE_CACHE=1 bun run api:openapi
+
+      - name: Build docs (.md -> .html)
+        run: |
+          shopt -s nullglob
+          for f in docs/*.md; do
+            out="${f%.md}.html"
+            echo "Converting $f -> $out"
+            bunx --yes marked -i "$f" -o "$out"
+          done
+
+      - run: touch docs/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
