@@ -25,16 +25,13 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
+      - name: Build API and deps
+        run: bun run build --filter=@risk-scan/api...
+
       - run: OPENAPI_OUT=docs/openapi.json DISABLE_CACHE=1 bun run api:openapi
 
-      - name: Build docs (.md -> .html)
-        run: |
-          shopt -s nullglob
-          for f in docs/*.md; do
-            out="${f%.md}.html"
-            echo "Converting $f -> $out"
-            bunx --yes marked -i "$f" -o "$out"
-          done
+      - name: Build docs (.md -> .html with Mermaid)
+        run: bun scripts/build-docs.ts docs
 
       - run: touch docs/.nojekyll
 
