@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Silicon Valley Bank 2023 collapse — case study</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --fg:#111827; --bg:#fff; --muted:#6b7280; --border:#e5e7eb;
+      --code-bg:#f6f8fa; --thead:#f8fafc; --zebra:#f9fafb; --link:#111827;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --fg:#e5e7eb; --bg:#0b0f16; --muted:#9ca3af; --border:#293142;
+        --code-bg:#0f172a; --thead:#0b1220; --zebra:#0d1526; --link:#e5e7eb;
+      }
+    }
+    html,body{height:100%}
+    body{
+      max-width:960px;margin:2rem auto;padding:0 1rem;
+      font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial;
+      color:var(--fg);background:var(--bg);
+    }
+    h1,h2,h3{line-height:1.25;margin:1.5rem 0 .75rem}
+    h1{font-size:1.9rem} h2{font-size:1.5rem} h3{font-size:1.25rem}
+    p,ul,ol,blockquote,table,pre{margin:1rem 0}
+    hr{border:none;border-top:1px solid var(--border);margin:2rem 0}
+    code{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      font-size:.95em;background:var(--code-bg);padding:.12rem .35rem;border-radius:.3rem
+    }
+    pre{background:var(--code-bg);padding:.75rem;border-radius:.5rem;overflow:auto}
+    pre code{background:transparent;padding:0}
+    blockquote{border-left:4px solid var(--border);padding:.5rem 1rem;color:var(--muted);margin-left:0}
+    .table-wrap{width:100%;overflow-x:auto}
+    .table-wrap table{
+      width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0;
+      border:1px solid var(--border);border-radius:.5rem;overflow:hidden
+    }
+    thead{background:var(--thead)}
+    th,td{
+      padding:.6rem .8rem;border-bottom:1px solid var(--border);border-right:1px solid var(--border);
+      text-align:left;vertical-align:top;word-wrap:break-word;overflow-wrap:anywhere
+    }
+    th:last-child,td:last-child{border-right:0}
+    tbody tr:last-child td{border-bottom:0}
+    tbody tr:nth-child(odd){background:var(--zebra)}
+    caption{caption-side:bottom;color:var(--muted);padding:.5rem;font-size:.9rem}
+    .mermaid{margin:1rem 0;overflow-x:auto;white-space:pre}
+    .mermaid svg{max-width:100%;height:auto}
+    a{color:var(--link);text-decoration:underline;text-underline-offset:2px}
+  </style>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+
+    const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+    function mermaidThemeVars(isDark) {
+      return {
+        background: css('--bg'),
+        fontFamily: 'system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica Neue,Arial',
+        primaryColor: isDark ? '#0d1526' : '#f9fafb',
+        primaryTextColor: css('--fg'),
+        primaryBorderColor: css('--border'),
+        lineColor: css('--border'),
+        clusterBkg: isDark ? '#0b1220' : '#f8fafc',
+        clusterBorder: css('--border'),
+        nodeBorder: css('--border'),
+        actorBkg: isDark ? '#0b1220' : '#f8fafc',
+        actorBorder: css('--border'),
+        signalColor: css('--fg'),
+        activationBkgColor: isDark ? '#121a2a' : '#eef2ff',
+        activationBorderColor: css('--border'),
+        sequenceNumberColor: css('--muted'),
+        timelineColor: css('--fg'),
+        timelineTextColor: css('--fg'),
+        timelineSectionColor: isDark ? '#64748b' : '#334155',
+        edgeLabelBackground: isDark ? '#0b0f16' : '#ffffff'
+      };
+    }
+
+    function initMermaid() {
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: 'loose',
+        theme: 'base',
+        themeVariables: mermaidThemeVars(isDark),
+        themeCSS: `
+          .node rect, .node polygon { rx: 10; ry: 10; }
+          .edgePath path, .cluster rect { filter: none; }
+          .label, .sectionTitle { font-weight: 600; }
+          .edgeLabel { padding: 2px 4px; border-radius: 4px; }
+        `
+      });
+      mermaid.run({ querySelector: '.mermaid' });
+    }
+
+    initMermaid();
+
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    if (mq.addEventListener) {
+      mq.addEventListener('change', () => { initMermaid(); });
+    } else {
+      mq.onchange = () => { initMermaid(); };
+    }
+  </script>
+</head>
+<body>
+<h1>Silicon Valley Bank 2023 collapse — case study</h1>
+<blockquote>
+<p><strong>How RiskScan would have surfaced the warning signs by September 2022</strong></p>
+</blockquote>
+<hr>
+<h2>TL;DR</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Month</th>
+<th>Public signal</th>
+<th>RiskScan flag</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Mar 2022</strong></td>
+<td>HTM (&quot;held-to-maturity&quot;) securities pass $90bn (≈ 57% of total assets).</td>
+<td><code>HTMConcentration</code> (⚠️ Medium)</td>
+</tr>
+<tr>
+<td><strong>Jun 2022</strong></td>
+<td>Unrealised HTM losses &gt; <strong>$1.3bn</strong>.</td>
+<td><code>UnrealisedLosses</code> (⚠️ Medium)</td>
+</tr>
+<tr>
+<td><strong>Sep 2022</strong></td>
+<td>Unrealised losses ~ <strong>$15bn</strong> vs equity ~ $16bn (paper equity nearly wiped).</td>
+<td><strong>Composite high</strong>: <code>UnrealisedLosses</code> + <code>HTMConcentration</code></td>
+</tr>
+<tr>
+<td><strong>Dec 2022</strong></td>
+<td>Moody’s warns of downgrade.</td>
+<td>— <em>(informational)</em></td>
+</tr>
+<tr>
+<td><strong>Mar 2023</strong></td>
+<td>48‑hour deposit run; FDIC takeover.</td>
+<td>—</td>
+</tr>
+</tbody></table></div>
+<p>RiskScan’s composite rules would have escalated SVB to <strong>High</strong> by <strong>Sep 2022</strong>, giving PMs ~six months to de‑risk.</p>
+<hr>
+<h2>1) Signals over time</h2>
+<div class="mermaid">
+timeline
+    title SVB public signals (2022→2023)
+    Mar 2022 : HTM > $90bn (~57% assets)
+    Jun 2022 : Unrealised HTM losses > $1.3bn
+    Sep 2022 : Unrealised losses ~ $15bn; equity ~ $16bn (≈94% eroded on paper)
+    Dec 2022 : Moody's places SVB on review for downgrade
+    Mar 2023 : 48h deposit run; FDIC takeover
+</div>
+<p><em>Source: SVB 10‑Q filings (2022 Q1–Q3), rating‑agency releases, FDIC.</em></p>
+<hr>
+<h2>2) Why the balance‑sheet structure was fragile</h2>
+<div class="mermaid">
+graph TD
+  A[Rate hikes 2022] --> B[AFS/HTM bond prices fall]
+  B --> C["Large unrealised losses (HTM)"]
+  C --> D[Equity coverage thins]
+  D --> E[Depositors grow nervous]
+  E --> F[Outflows accelerate]
+  F --> G[Forced AFS sales -> realize losses]
+  G --> H[Solvency & liquidity spiral]
+  H --> I[FDIC receivership]
+</div>
+<p>The <strong>key issue</strong> was the <strong>mismatch</strong>: long‑duration HTM fixed‑income vs. flight‑prone deposits. Unrealised HTM losses
+don’t hit P&amp;L, but they <strong>do</strong> hit economic value and <strong>equity buffers</strong>.</p>
+<hr>
+<h2>3) Risk rules (current implementation)</h2>
+<p>These checks are <strong>implemented today</strong> for regional banks:</p>
+<ul>
+<li><p><code>CREConcentration</code> → <strong>&gt; 50%</strong> CRE loans / total loans
+<code>if ((creLoans ?? 0) / totalLoans &gt; 0.5)</code></p>
+</li>
+<li><p><code>LowLiquidity</code> → <strong>&lt; 20%</strong> liquid assets / deposits
+<code>if (liquidAssets / deposits &lt; 0.2)</code></p>
+</li>
+<li><p><code>RisingNPAs</code> → NPAs <strong>rising MoM</strong>
+<code>if ((npaMoM ?? 0) &gt; 0)</code></p>
+</li>
+<li><p><code>HTMConcentration</code> → <strong>&gt; 40%</strong> HTM securities / total assets
+<code>if ((htmSecurities ?? 0) / totalAssets &gt; 0.4)</code></p>
+</li>
+<li><p><code>UnrealisedLosses</code> → <strong>AOCI / Tier1 &lt; −30%</strong> (i.e., unrealised losses &gt; 30% of capital)
+<code>if ((aoci ?? 0) / tier1Capital &lt; -0.3)</code></p>
+</li>
+<li><p><code>UninsuredDeposits</code> → <strong>&gt; 60%</strong> of total deposits
+<code>if ((uninsuredDeposits ?? 0) / totalDeposits &gt; 0.6)</code></p>
+</li>
+</ul>
+<p><strong>Severity model:</strong> if <strong>≥ 2 flags</strong> fire, severity = <strong>high</strong>; otherwise <strong>medium</strong>.</p>
+<p><strong>Cross‑sector text signal:</strong> <code>GoingConcern</code> is raised by a detector over filing text (regex first, LLM fallback), wired
+in ETL.</p>
+<blockquote>
+<p>We <strong>do not</strong> emit an <code>EquityWipeoutRisk</code> flag today; the <strong>composite</strong> of <code>UnrealisedLosses</code> + <code>HTMConcentration</code> (
+and often <code>UninsuredDeposits</code>) escalates severity to <strong>High</strong> and captures the same outcome.</p>
+</blockquote>
+<hr>
+<h2>4) End‑to‑end flow (daily)</h2>
+<div class="mermaid">
+sequenceDiagram
+  autonumber
+  participant ETL as "ETL (EDGAR, ratings, market)"
+  participant Engine as "Risk Engine"
+  participant DB as "Postgres"
+  participant API as "API"
+  participant UI as "Dashboard"
+
+  ETL->>DB: Load 10-Q tables (AFS/HTM), ratings, metadata
+  Engine->>DB: Compute flags per issuer (rules above)
+  API->>UI: /flags?severity=High
+  UI->>User: Highlight issuers with High severity (e.g., SVB in Oct 2022)
+</div>
+<hr>
+<h2>5) Composite flag snapshot</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Fired on</th>
+<th>Severity</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>HTMConcentration</code></td>
+<td>2022‑03‑31</td>
+<td>⚠️ Medium</td>
+</tr>
+<tr>
+<td><code>UnrealisedLosses</code></td>
+<td>2022‑06‑30</td>
+<td>⚠️ Medium</td>
+</tr>
+<tr>
+<td><code>GoingConcern</code></td>
+<td>2022‑09‑30</td>
+<td>🚨 High</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2>References</h2>
+<ol>
+<li><strong>SVB Financial Group</strong> Forms 10‑Q (Q1–Q3 2022), esp. Note 3 (AFS/HTM).</li>
+<li><strong>FDIC</strong> press release, Mar 10, 2023.</li>
+<li>Moody’s Investor Service, “SVB on Review for Downgrade”, 21 Dec 2022.</li>
+</ol>
+<p><sub>Numbers are rounded and indicative; exact figures vary by filing line‑item.</sub></p>
+
+</body>
+</html>
