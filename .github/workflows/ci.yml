@@ -38,12 +38,3 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: lwensveen/risk-scan
-
-      - name: Generate OpenAPI
-        run: DISABLE_CACHE=1 bun run api:openapi
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: openapi
-          path: docs/openapi.json
