@@ -13,7 +13,7 @@
     "prettier": "^3.6.2",
     "syncpack": "^13.0.4",
     "turbo": "^2.5.5",
-    "typescript": "5.8.3",
+    "typescript": "5.9.2",
     "vitest": "^3.2.4"
   },
   "engines": {
